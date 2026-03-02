@@ -1,0 +1,81 @@
+name: Qoder Auto Code Review
+
+on:
+  pull_request:
+    types: [ opened, reopened, unlabeled ]
+    branches: [ "main" ]
+  issue_comment:
+    types: [ created ]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to review'
+        required: true
+        type: string
+
+jobs:
+  qoder-review:
+    runs-on: ubuntu-slim
+    # Trigger conditions:
+    # 1. PR opened/reopened (ignore synchronize to reduce duplicate reviews)
+    # 2. 'ai reviewed' label removed (re-review)
+    # 3. OWNER/COLLABORATOR comments '@tair-ci review'
+    # 4. Manual workflow dispatch
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && github.event.action != 'unlabeled') ||
+      (github.event_name == 'pull_request' && github.event.label.name == 'ai reviewed') ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       contains(github.event.comment.body, '@tair-ci review') &&
+       contains(fromJSON('["OWNER", "COLLABORATOR"]'), github.event.comment.author_association))
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Determine PR number
+        id: pr-info
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "number=${{ github.event.inputs.pr_number }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "issue_comment" ]; then
+            echo "number=${{ github.event.issue.number }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ steps.pr-info.outputs.number }}/head
+          fetch-depth: 0
+      - name: Run Qoder Code Review
+        # uses: QoderAI/qoder-action@v0
+        uses: QoderAI/qoder-action@0881d27d15a7a93778ebc5c942d11da313ee8b7e
+        with:
+          qoder_personal_access_token: ${{ secrets.QODER_PERSONAL_ACCESS_TOKEN }}
+          prompt: |
+            /review-pr
+            REPO:${{ github.repository }} PR_NUMBER:${{ steps.pr-info.outputs.number }}
+            MANDATORY_REQUIREMENTS:
+            - Only use COMMENT as event when calling submit_pending_pull_request_review. Never use REQUEST_CHANGES or APPROVE.
+            - Before reviewing, fetch and read ALL existing comments, reviews, and review comments on this PR.
+            - Do NOT generate duplicate inline comments. If an issue has already been mentioned in existing comments/reviews, skip it.
+            - If a previous Review Summary already exists and this review has no substantial new findings beyond what was already covered, you may skip the full Summary template entirely. In this case, either omit the summary or provide just 1-2 sentences briefly noting any incremental observations.
+          enable_qoder_github_mcp: true
+
+      - name: Add ai reviewed label
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const prNumber = ${{ steps.pr-info.outputs.number }};
+            if (prNumber) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                labels: ['ai reviewed']
+              });
+            }
