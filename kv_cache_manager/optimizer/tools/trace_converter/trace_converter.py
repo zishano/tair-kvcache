@@ -13,6 +13,7 @@ Usage:
 import argparse
 import sys
 import os
+import json
 import importlib.util
 import inspect
 from pathlib import Path
@@ -23,6 +24,7 @@ SCRIPT_DIR = Path(__file__).parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
 from converters.base import BaseConverter
+from utils.merge_utils import merge_jsonl_files, count_traces_in_file
 
 
 def _camel_to_snake(name: str) -> str:
@@ -201,7 +203,8 @@ def main():
         parents=[pre_parser]
     )
 
-    parser.add_argument('-i', '--input', required=True, help='Input trace file path')
+    parser.add_argument('-i', '--input', required=True, nargs='+',
+                        help='Input trace file path(s) (supports multiple files)')
     parser.add_argument('-o', '--output', default=None, 
                         help='Output file path (default: auto-generate based on input filename and mode)')
     parser.add_argument('-f', '--format', required=True, choices=available_formats,
@@ -216,18 +219,32 @@ def main():
     parser.add_argument('--model-mapping', default=None, help='Model name mapping')
     parser.add_argument('--time-field', default='time', help='Time field name for text format')
     parser.add_argument('--content-field', default='prompt_messages', help='Content field name for text format')
-    parser.add_argument('--num-workers', type=int, default=4, help='Number of parallel workers')
+    parser.add_argument('--num-workers', type=int, default=4, help='Number of parallel workers for tokenization')
+    parser.add_argument('--no-sort', action='store_true', 
+                        help='Disable timestamp sorting (faster but unsorted output)')
+    parser.add_argument('--keep-tokens', action='store_true',
+                        help='Keep tokens field in output (for debugging, increases file size significantly)')
 
     args = parser.parse_args()
 
-    input_path = Path(args.input)
-    if not input_path.exists():
-        print(f"❌ Error: Input file not found: {args.input}", file=sys.stderr)
-        return 1
+    # 验证所有输入文件是否存在
+    input_files = [Path(f) for f in args.input]
+    for input_path in input_files:
+        if not input_path.exists():
+            print(f"❌ Error: Input file not found: {input_path}", file=sys.stderr)
+            return 1
 
+    # 自动生成输出文件名
     if args.output is None:
-        input_dir = input_path.parent
-        input_stem = input_path.stem
+        if len(input_files) == 1:
+            # 单文件: 使用输入文件名
+            input_dir = input_files[0].parent
+            input_stem = input_files[0].stem
+        else:
+            # 多文件: 使用第一个文件的目录和 "merged" 前缀
+            input_dir = input_files[0].parent
+            input_stem = "merged"
+        
         suffix = '_optimizer' if args.mode == 'optimizer' else '_inference'
         output_filename = f"{input_stem}{suffix}.jsonl"
         output_path = input_dir / output_filename
@@ -273,16 +290,96 @@ def main():
             model_mapping=model_mapping,
             time_field=args.time_field,
             content_field=args.content_field,
-            num_workers=args.num_workers
+            num_workers=args.num_workers,
+            keep_tokens=args.keep_tokens
         )
 
-        print(f"🔄 Converting {args.input} → {output_path}")
+        # ============================================
+        # 统一处理流程
+        # ============================================
+        print(f"🔄 Converting {len(input_files)} file(s) → {output_path}")
         print(f"   Format: {args.format}, Mode: {args.mode}")
-
-        trace_count = converter.convert(args.input, str(output_path))
-
-        print(f"✅ Success! Converted {trace_count} traces")
-        print(f"   Output: {output_path}")
+        if args.keep_tokens:
+            print(f"   ⚠️  Warning: --keep-tokens enabled, output file will be large!")
+        print()
+        
+        # ============================================
+        # 阶段1: 转换每个输入文件为独立的JSONL
+        # ============================================
+        converted_files = []
+        total_traces = 0
+        
+        for i, input_file in enumerate(input_files, 1):
+            print(f"[{i}/{len(input_files)}] Processing: {input_file}")
+            
+            # 智能输出路径决策:
+            # - 单文件 + 指定-o: 直接生成到最终路径
+            # - 其他情况: 生成到中间路径（支持断点续传）
+            if len(input_files) == 1 and args.output:
+                individual_output = output_path
+                print(f"   Direct output to: {individual_output.name}")
+            else:
+                input_path = Path(input_file)
+                suffix = '_optimizer' if args.mode == 'optimizer' else '_inference'
+                individual_output = input_path.parent / f"{input_path.stem}{suffix}.jsonl"
+            
+            # 断点续传：检查是否已存在
+            if individual_output.exists():
+                print(f"   ✓ Already exists, skipping conversion: {individual_output.name}")
+                line_count = count_traces_in_file(individual_output)
+                converted_files.append(individual_output)
+                total_traces += line_count
+                print(f"   Found {line_count} traces (cumulative: {total_traces})\n")
+            else:
+                # 转换并保存
+                traces = converter.convert_to_traces(str(input_file))
+                
+                if traces:
+                    with open(individual_output, 'w', encoding='utf-8') as f_out:
+                        for trace in traces:
+                            f_out.write(json.dumps(trace, ensure_ascii=False) + '\n')
+                    
+                    converted_files.append(individual_output)
+                    total_traces += len(traces)
+                    print(f"   ✅ Saved {len(traces)} traces")
+                    print(f"   Cumulative: {total_traces} traces\n")
+                else:
+                    print(f"   ⚠️  No traces generated, skipping\n")
+                
+                # 立即释放内存
+                del traces
+        
+        if total_traces == 0:
+            print("❌ No traces generated from any file", file=sys.stderr)
+            return 1
+        
+        # ============================================
+        # 阶段2: 合并/排序（总是调用，由merge_utils优化）
+        # ============================================
+        # 即使单文件直接输出，也需要调用merge（可能需要排序）
+        if len(converted_files) == 1:
+            print(f"\n📦 Processing output file: {output_path.name}...")
+        else:
+            print(f"\n📦 Merging {len(converted_files)} file(s) into {output_path.name}...")
+        
+        if args.no_sort:
+            print("   Mode: No sorting")
+        else:
+            print("   Mode: Sort by timestamp_us")
+        
+        merged_count = merge_jsonl_files(
+            input_files=converted_files,
+            output_file=output_path,
+            sort_by_timestamp=not args.no_sort
+        )
+        
+        print(f"\n✅ Success! Generated {merged_count} traces")
+        
+        if len(input_files) > 1:
+            print(f"\n📁 Files generated:")
+            print(f"   Individual JSONL files: {input_files[0].parent}")
+        print(f"   Final output: {output_path}")
+        
         return 0
 
     except Exception as e:

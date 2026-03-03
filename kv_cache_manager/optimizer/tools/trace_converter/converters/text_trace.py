@@ -112,6 +112,7 @@ def _process_chunk_text(
             block_ids = tokens_to_block_ids(token_ids, block_size=block_size)
             
             # 根据模式生成traces
+            # tokens字段由BaseConverter根据keep_tokens参数自动控制
             if mode == 'optimizer':
                 # Optimizer模式: Get+Write
                 get_trace = converter._create_get_trace(
@@ -167,9 +168,10 @@ class TextTraceConverter(BaseConverter):
         time_field: str = 'time',
         content_field: str = 'prompt_messages',
         num_workers: int = None,
+        keep_tokens: bool = False,
         **kwargs  # 忽略其他参数（如 model_mapping）
     ):
-        super().__init__(default_instance_id, instance_block_sizes, mode)
+        super().__init__(default_instance_id, instance_block_sizes, mode, keep_tokens)
         self.block_size = self.get_block_size(default_instance_id)  # 获取该instance的block_size
         self.time_field = time_field
         self.content_field = content_field
@@ -185,8 +187,8 @@ class TextTraceConverter(BaseConverter):
             model_name=model_name
         )
 
-    def convert(self, input_file: str, output_file: str) -> int:
-        """转换文本trace为标准格式（支持多进程加速）"""
+    def convert_to_traces(self, input_file: str) -> list:
+        """转换文本trace为traces列表（支持多进程加速）"""
         # 读取所有行
         with open(input_file, 'r', encoding='utf-8') as f_in:
             lines = [line.strip() for line in f_in if line.strip()]
@@ -252,19 +254,21 @@ class TextTraceConverter(BaseConverter):
             
             print()  # 换行
         
-        # 合并结果并写入
-        print("\nWriting traces to file...")
-        trace_count = 0
-        with open(output_file, 'w', encoding='utf-8') as f_out:
-            for chunk_traces in tqdm(results, desc="Writing", unit="chunk", ncols=80, leave=False):
-                for trace in chunk_traces:
-                    f_out.write(json.dumps(trace) + '\n')
-                    trace_count += 1
+        # 合并结果
+        print("\nMerging traces from all workers...")
+        all_traces = []
+        for chunk_traces in tqdm(results, desc="Merging", unit="chunk", ncols=80, leave=False):
+            all_traces.extend(chunk_traces)
+        
+        # 按timestamp排序（保证输出有序，尤其多进程时）
+        print("Sorting traces by timestamp...")
+        all_traces.sort(key=lambda t: t.get('timestamp_us', 0))
         
         total_elapsed = time.time() - start_time
-        print(f"\n✅ Completed: {trace_count} traces in {total_elapsed:.1f}s "
-              f"({trace_count/total_elapsed:.0f} traces/s)")
-        return trace_count
+        print(f"\n✅ Completed: {len(all_traces)} traces in {total_elapsed:.1f}s "
+              f"({len(all_traces)/total_elapsed:.0f} traces/s)")
+        
+        return all_traces
 
     def _extract_timestamp(self, data: dict) -> int:
         """提取并转换时间戳"""
@@ -288,13 +292,20 @@ class TextTraceConverter(BaseConverter):
         return smart_tokenize(self.tokenizer, content, use_chat_template=True)
 
     def _generate_optimizer_traces(self, timestamp_us: int, block_ids: list, tokens: list = None) -> list:
-        """生成Optimizer格式的Get+Write traces"""
+        """
+        生成Optimizer格式的Get+Write traces
+        
+        Args:
+            tokens: token IDs列表（由base层根据keep_tokens决定是否保留）
+        """
+        tokens = tokens or []
+        
         # Get trace - 显式使用default_instance_id
         get_trace = self._create_get_trace(
             timestamp_us=timestamp_us,
             keys=block_ids,
             instance_id=self.default_instance_id,
-            tokens=tokens or []
+            tokens=tokens
         )
 
         # Write trace (时间戳+1微秒) - 显式使用default_instance_id
@@ -302,13 +313,19 @@ class TextTraceConverter(BaseConverter):
             timestamp_us=timestamp_us + 1,
             keys=block_ids,
             instance_id=self.default_instance_id,
-            tokens=tokens or []
+            tokens=tokens
         )
 
         return [get_trace, write_trace]
 
     def _generate_inference_trace(self, timestamp_us: int, block_ids: list, tokens: list = None) -> dict:
-        """生成Inference格式的DialogTurn trace"""
+        """
+        生成Inference格式的DialogTurn trace
+        
+        Args:
+            tokens: token IDs列表（由base层根据keep_tokens决定是否保留）
+        """
+        tokens = tokens or []
         input_len = len(block_ids) * self.block_size
 
         # DialogTurn trace - 显式使用default_instance_id
@@ -319,7 +336,7 @@ class TextTraceConverter(BaseConverter):
             output_len=0,  # 文本输入没有输出
             total_keys=block_ids,
             instance_id=self.default_instance_id,
-            tokens=tokens or []
+            tokens=tokens
         )
 
         return dialog_trace
