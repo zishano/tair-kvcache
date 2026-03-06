@@ -1,6 +1,7 @@
 #pragma once
 
 #include <atomic>
+#include <condition_variable>
 #include <functional>
 #include <map>
 #include <memory>
@@ -34,7 +35,7 @@ public:
 
 private:
     void ExpireLoop();
-    void StoreMinNextSleepTime(int64_t next_sleep_time);
+    void StoreMinNextSleepTimeUs(int64_t next_sleep_time_us);
     struct ExpireUnit {
         int64_t expire_point;
         std::string write_session_id;
@@ -61,7 +62,9 @@ private:
     SessionIdMap session_id_map_;
     std::thread expire_thread_;
     std::atomic_bool stop_ = false;
-    std::atomic_int64_t next_sleep_time_;
+    std::atomic_int64_t next_sleep_time_us_;
+    std::mutex stop_mutex_;
+    std::condition_variable stop_cond_;
 };
 
 } // namespace kv_cache_manager

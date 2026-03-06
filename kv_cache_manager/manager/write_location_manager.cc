@@ -5,7 +5,7 @@
 namespace kv_cache_manager {
 
 namespace {
-constexpr static int kDefaultExpireLoopSleepTime = 5 * 1000 * 1000; // us
+constexpr int kDefaultExpireLoopSleepTimeUs = 5 * 1000 * 1000; // us
 };
 
 size_t WriteLocationManager::SessionIdMap::Size() const {
@@ -85,7 +85,7 @@ bool WriteLocationManager::SessionIdMap::GetAndDelete(const std::string &write_s
 }
 
 WriteLocationManager::WriteLocationManager() {
-    next_sleep_time_.store(kDefaultExpireLoopSleepTime, std::memory_order_relaxed);
+    next_sleep_time_us_.store(kDefaultExpireLoopSleepTimeUs, std::memory_order_relaxed);
     KVCM_LOG_DEBUG("WriteLocationManager constructed");
 }
 
@@ -96,7 +96,12 @@ void WriteLocationManager::Start() {
 }
 
 void WriteLocationManager::Stop() {
-    stop_.store(true, std::memory_order_relaxed);
+    {
+        std::lock_guard<std::mutex> lock(stop_mutex_);
+        stop_.store(true, std::memory_order_relaxed);
+    }
+    stop_cond_.notify_all();
+
     if (expire_thread_.joinable()) {
         expire_thread_.join();
     }
@@ -105,13 +110,13 @@ void WriteLocationManager::Stop() {
 void WriteLocationManager::DoCleanup() {
     KVCM_LOG_DEBUG("Cleaning up all write sessions");
     session_id_map_.DropAll();
-    next_sleep_time_.store(kDefaultExpireLoopSleepTime, std::memory_order_relaxed);
+    next_sleep_time_us_.store(kDefaultExpireLoopSleepTimeUs, std::memory_order_relaxed);
 }
 
-void WriteLocationManager::StoreMinNextSleepTime(int64_t next_sleep_time) {
-    int64_t expected = next_sleep_time_.load(std::memory_order_relaxed);
-    int64_t desired = std::min(expected, next_sleep_time);
-    while (!next_sleep_time_.compare_exchange_weak(expected, desired, std::memory_order_relaxed)) {
+void WriteLocationManager::StoreMinNextSleepTimeUs(int64_t next_sleep_time_us) {
+    int64_t expected = next_sleep_time_us_.load(std::memory_order_relaxed);
+    int64_t desired = std::min(expected, next_sleep_time_us);
+    while (!next_sleep_time_us_.compare_exchange_weak(expected, desired, std::memory_order_relaxed)) {
         desired = std::min(expected, desired);
     }
 }
@@ -121,7 +126,12 @@ void WriteLocationManager::ExpireLoop() {
     while (!stop_.load(std::memory_order_relaxed)) {
         ExpireUnitPtr unit_ptr_to_expire;
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(next_sleep_time_));
+            {
+                std::unique_lock lock(stop_mutex_);
+                stop_cond_.wait_for(lock, std::chrono::microseconds(next_sleep_time_us_), [this]() {
+                    return stop_.load(std::memory_order_relaxed);
+                });
+            }
 
             if (session_id_map_.Empty()) {
                 KVCM_INTERVAL_LOG_DEBUG(100, "expire queue empty");
@@ -129,9 +139,9 @@ void WriteLocationManager::ExpireLoop() {
             }
             int64_t cur_point = TimestampUtil::GetSteadyTimeUs();
             if (int64_t next_point = session_id_map_.DropByExpirePoint(cur_point); next_point > 0) {
-                StoreMinNextSleepTime(next_point - cur_point);
+                StoreMinNextSleepTimeUs(next_point - cur_point);
             } else {
-                next_sleep_time_.store(kDefaultExpireLoopSleepTime, std::memory_order_relaxed);
+                next_sleep_time_us_.store(kDefaultExpireLoopSleepTimeUs, std::memory_order_relaxed);
             }
         }
     }
@@ -155,7 +165,7 @@ void WriteLocationManager::Put(const std::string &write_session_id,
     unit_ptr->write_location_info.keys = std::move(keys);
     unit_ptr->write_location_info.location_ids = std::move(location_ids);
     session_id_map_.Put(unit_ptr);
-    StoreMinNextSleepTime(write_timeout_seconds);
+    StoreMinNextSleepTimeUs(write_timeout_seconds * 1000 * 1000);
 }
 
 bool WriteLocationManager::GetAndDelete(const std::string &write_session_id, WriteLocationInfo &location_info) {
