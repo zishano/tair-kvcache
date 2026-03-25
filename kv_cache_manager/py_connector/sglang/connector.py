@@ -13,7 +13,21 @@ from sglang.srt.mem_cache.hicache_storage import (
     HiCacheStorageExtraInfo,
 )
 from sglang.srt.mem_cache.memory_pool_host import HostKVCache
-from sglang.srt.metrics.collector import StorageMetrics
+StorageMetrics = None
+try:
+    from sglang.srt.observability.metrics_collector import StorageMetrics
+except ImportError:
+    pass
+if StorageMetrics is None:
+    try:
+        from sglang.srt.metrics.collector import StorageMetrics
+    except ImportError:
+        raise ImportError(
+            "Cannot import StorageMetrics from sglang. "
+            "Tried sglang.srt.observability.metrics_collector and "
+            "sglang.srt.metrics.collector. "
+            "Please check your sglang version is compatible."
+        )
 from sglang.srt.distributed import get_tp_group
 from sglang.srt.layers.dp_attention import get_attention_tp_group, is_dp_attention_enabled
 
@@ -41,6 +55,12 @@ class HiCacheKVCM(HiCacheStorage):
         self.backup_pgs = []
         self.prefetch_bandwidth = []
         self.backup_bandwidth = []
+
+        # Declare v1 interface support so that sglang's cache_controller uses
+        # batch_set_v1/batch_get_v1 (zero-copy path) instead of the legacy
+        # batch_set/batch_get. This avoids requiring users to manually add
+        # "interface_v1": 1 in --hicache-storage-backend-extra-config.
+        self.extra_config.setdefault("interface_v1", 1)
 
     def _init_kvcm_client(self):
         # parallelism
@@ -267,12 +287,28 @@ class HiCacheKVCM(HiCacheStorage):
         write_session_id = result["write_session_id"]
         block_mask = result["block_mask"]
         save_indices = self._parse_block_mask(block_mask, len_prefix, len_new)
-        len_save = max(save_indices, default=-1) + 1
+
+        finish_trace_id = f"finish-{trace_id}"
+
+        # None means inconsistent manager state — treat as write failure.
+        if save_indices is None:
+            logger.warning(f"_batch_set: inconsistent block_mask from manager, "
+                           f"aborting write session {write_session_id}")
+            if self.tp_rank == 0:
+                # Mark all locations as failed so manager cleans them up.
+                self._manager_client.finish_write_cache(
+                    {
+                        "trace_id": finish_trace_id,
+                        "instance_id": self.instance_id,
+                        "write_session_id": write_session_id,
+                        "success_blocks": {"bool_masks": {"values": [False] * len(locations)}},
+                    }
+                )
+            return [False] * len_new
 
         unmatched = len(save_indices)
 
-        finish_trace_id = f"finish-{trace_id}"
-        # Early return if no locations
+        # Early return if all new blocks are already cached.
         if unmatched == 0:
             if self.tp_rank == 0:
                 self._manager_client.finish_write_cache(
@@ -283,7 +319,7 @@ class HiCacheKVCM(HiCacheStorage):
                         "success_blocks": {"bool_masks": {"values": [False] * len(locations)}},
                     }
                 )
-            return [False] * len(keys)
+            return [True] * len_new
 
         assert unmatched == len(locations)
 
@@ -317,7 +353,6 @@ class HiCacheKVCM(HiCacheStorage):
             flag = bool(flag_tensor.item())
 
         finish_mask = [flag] * unmatched
-        success_mask = finish_mask + [False] * (len_new - len_save)
         if self.tp_rank == 0:
             self._manager_client.finish_write_cache(
                 {
@@ -327,7 +362,16 @@ class HiCacheKVCM(HiCacheStorage):
                     "success_blocks": {"bool_masks": {"values": finish_mask}},
                 }
             )
-        return success_mask
+
+        # Build result list: 1:1 positional mapping with input keys
+        # - keys not in save_indices → True
+        # - keys in save_indices → flag (True if save succeeded)
+        save_indices_set = set(save_indices)
+        result_list = [
+            flag if i in save_indices_set else True
+            for i in range(len_new)
+        ]
+        return result_list
 
     def batch_set_v1(
         self,
@@ -440,18 +484,39 @@ class HiCacheKVCM(HiCacheStorage):
             buffers.append(buffer)
         return buffers
 
-    def _parse_block_mask(self, block_mask: dict, len_prefix: int, len_new: int) -> int:
+    def _parse_block_mask(self, block_mask: dict, len_prefix: int, len_new: int) -> Optional[List[int]]:
+        """Parse block_mask from manager to determine which new-block indices need writing.
+
+        Returns:
+            List[int]: indices (relative to new blocks) that need writing.
+                       Empty list means all new blocks are already cached.
+            None: manager returned an inconsistent state; caller should treat
+                  as a write failure (safe fallback).
+        """
         save_indices = []
         if "offset" in block_mask:
             offset = block_mask["offset"]
-            if offset >= len_prefix:
-                save_indices.extend(range(offset, len_prefix + len_new))
+            if offset < len_prefix:
+                # Inconsistent: offset behind prefix boundary.
+                logger.warning(f"_parse_block_mask: offset {offset} < len_prefix {len_prefix}, "
+                               "treating as inconsistent state")
+                return None
+            save_indices.extend(range(offset, len_prefix + len_new))
         else:
             # False: need to store
             bool_masks = block_mask.get("bool_masks", {}).get("values", [])
-            if all(bool_masks[:len_prefix]):
-                max_index = max([i for i, x in enumerate(bool_masks) if not x], default=-1)
-                save_indices.extend([i for i in range(len_prefix, max_index + 1) if not bool_masks[i]])
+            if len(bool_masks) < len_prefix + len_new:
+                # Incomplete mask data from manager.
+                logger.warning(f"_parse_block_mask: bool_masks length {len(bool_masks)} < "
+                               f"expected {len_prefix + len_new}, treating as inconsistent state")
+                return None
+            if not all(bool_masks[:len_prefix]):
+                # Inconsistent: prefix blocks not fully cached.
+                logger.warning("_parse_block_mask: prefix blocks not fully cached in bool_masks, "
+                               "treating as inconsistent state")
+                return None
+            max_index = max([i for i, x in enumerate(bool_masks) if not x], default=-1)
+            save_indices.extend([i for i in range(len_prefix, max_index + 1) if not bool_masks[i]])
         save_indices = [(i - len_prefix) for i in save_indices if i >= len_prefix]
         return save_indices
 
