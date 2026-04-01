@@ -1,5 +1,4 @@
 #include "kv_cache_manager/client/src/internal/sdk/sdk_buffer_check_util.h"
-#include "kv_cache_manager/client/src/internal/sdk/cuda_util.h"
 #include "kv_cache_manager/common/env_util.h"
 #include "kv_cache_manager/common/hash_util.h"
 namespace kv_cache_manager {
@@ -28,13 +27,11 @@ __global__ void GetIovsCrcDevice(const IovDevice *iovs, int iovs_size, uint32_t 
     const uint8_t *p = nullptr;
     uint8_t data;
     uint32_t crc = 0xFFFFFFFFu;
-    // head data
     for (int i = 0; i < cal_byte_size; i++) {
         p = static_cast<const uint8_t *>(iov.base);
         data = *(p + i);
         crc = Crc32ByteDevice(crc, data);
     }
-    // tail data
     for (int i = iov.size - cal_byte_size; i < iov.size; i++) {
         p = static_cast<const uint8_t *>(iov.base);
         data = *(p + i);
@@ -55,17 +52,17 @@ std::vector<uint32_t> SdkBufferCheckUtil::GetIovsCrc(
         return {};
     }
     auto iovs_byte_size = sizeof(IovDevice) * iovs_size;
-    CHECK_CUDA_ERROR_RETURN(cudaMemcpyAsync(iovs_d, iovs_h_ptr, iovs_byte_size, cudaMemcpyHostToDevice, stream),
+    CHECK_MUSA_ERROR_RETURN(musaMemcpyAsync(iovs_d, iovs_h_ptr, iovs_byte_size, musaMemcpyHostToDevice, stream),
                             {},
-                            "cudaMemcpy iovs_d fail");
+                            "musaMemcpy iovs_d fail");
     int block_num = (iovs_size + kDefaultThreadsPerBlock - 1) / kDefaultThreadsPerBlock;
     GetIovsCrcDevice<<<block_num, kDefaultThreadsPerBlock, 0, stream>>>(iovs_d, iovs_size, crcs_d, cal_byte_size);
     std::vector<uint32_t> crcs(iovs_size);
     auto crc_byte_size = sizeof(uint32_t) * iovs_size;
-    CHECK_CUDA_ERROR_RETURN(cudaMemcpyAsync(crcs.data(), crcs_d, crc_byte_size, cudaMemcpyDeviceToHost, stream),
+    CHECK_MUSA_ERROR_RETURN(musaMemcpyAsync(crcs.data(), crcs_d, crc_byte_size, musaMemcpyDeviceToHost, stream),
                             {},
-                            "cudaMemcpy crcs_d fail");
-    CHECK_CUDA_ERROR_RETURN(cudaStreamSynchronize(stream), {}, "cuda stream synchronize fail");
+                            "musaMemcpy crcs_d fail");
+    CHECK_MUSA_ERROR_RETURN(musaStreamSynchronize(stream), {}, "musa stream synchronize fail");
     return crcs;
 }
 

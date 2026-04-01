@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "kv_cache_manager/common/error_code.h"
+#include "kv_cache_manager/manager/schedule_plan_executor.h"
 #include "kv_cache_manager/metrics/metrics_registry.h"
 
 namespace kv_cache_manager {

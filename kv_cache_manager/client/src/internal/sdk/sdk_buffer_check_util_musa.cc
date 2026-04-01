@@ -63,11 +63,11 @@ std::vector<int64_t> SdkBufferCheckUtil::GetBlocksHash(const BlockBuffers &block
 std::vector<uint32_t> SdkBufferCheckUtil::GetIovsCrc(const std::vector<IovDevice> &iovs_h) {
     IovDevice *iovs_d = nullptr;
     uint32_t *crcs_d = nullptr;
-    CHECK_CUDA_ERROR_RETURN(cudaMalloc(&iovs_d, sizeof(IovDevice) * iovs_h.size()), {}, "cudaMalloc fail");
-    CHECK_CUDA_ERROR_RETURN(cudaMalloc(&crcs_d, sizeof(uint32_t) * iovs_h.size()), {}, "cudaMalloc fail");
+    CHECK_MUSA_ERROR_RETURN(musaMalloc(&iovs_d, sizeof(IovDevice) * iovs_h.size()), {}, "musaMalloc fail");
+    CHECK_MUSA_ERROR_RETURN(musaMalloc(&crcs_d, sizeof(uint32_t) * iovs_h.size()), {}, "musaMalloc fail");
     auto crcs = GetIovsCrc(iovs_h, iovs_d, crcs_d, nullptr);
-    CHECK_CUDA_ERROR_RETURN(cudaFree(iovs_d), {}, "cudaMalloc fail");
-    CHECK_CUDA_ERROR_RETURN(cudaFree(crcs_d), {}, "cudaMalloc fail");
+    CHECK_MUSA_ERROR_RETURN(musaFree(iovs_d), {}, "musaFree fail");
+    CHECK_MUSA_ERROR_RETURN(musaFree(crcs_d), {}, "musaFree fail");
     return crcs;
 }
 
@@ -82,14 +82,17 @@ SdkBufferCheckPool::SdkBufferCheckPool(size_t cell_num) { cells_.resize(cell_num
 
 SdkBufferCheckPool::~SdkBufferCheckPool() {
     for (const auto &cell : cells_) {
+        if (cell.gpu_stream) {
+            CHECK_MUSA_ERROR(musaStreamDestroy(cell.gpu_stream), "musa stream destroy failed");
+        }
         if (cell.h_iovs) {
-            CHECK_CUDA_ERROR(cudaFreeHost(cell.h_iovs), "cuda free iovs_h_mem[%p] failed", cell.h_iovs);
+            CHECK_MUSA_ERROR(musaFreeHost(cell.h_iovs), "musa free iovs_h_mem[%p] failed", cell.h_iovs);
         }
         if (cell.d_iovs) {
-            CHECK_CUDA_ERROR(cudaFree(cell.d_iovs), "cuda free d_iovs[%p] failed", cell.d_iovs);
+            CHECK_MUSA_ERROR(musaFree(cell.d_iovs), "musa free d_iovs[%p] failed", cell.d_iovs);
         }
         if (cell.d_crcs) {
-            CHECK_CUDA_ERROR(cudaFree(cell.d_crcs), "cuda free d_crcs[%p] failed", cell.d_crcs);
+            CHECK_MUSA_ERROR(musaFree(cell.d_crcs), "musa free d_crcs[%p] failed", cell.d_crcs);
         }
     }
 }
@@ -98,14 +101,14 @@ bool SdkBufferCheckPool::Init(size_t max_check_iov_num) {
     size_t iovs_byte_size = max_check_iov_num * sizeof(IovDevice);
     size_t crcs_byte_size = max_check_iov_num * sizeof(uint32_t);
     for (auto &cell : cells_) {
-        CHECK_CUDA_ERROR_RETURN(
-            cudaMallocHost(&cell.h_iovs, iovs_byte_size), false, "cudaMallocHost [%zu] bytes failed", iovs_byte_size);
-        CHECK_CUDA_ERROR_RETURN(
-            cudaMalloc(&cell.d_iovs, iovs_byte_size), false, "cudaMalloc [%zu] byte failed", iovs_byte_size);
-        CHECK_CUDA_ERROR_RETURN(
-            cudaMalloc(&cell.d_crcs, crcs_byte_size), false, "cudaMalloc [%zu] byte failed", crcs_byte_size);
-        CHECK_CUDA_ERROR_RETURN(
-            cudaStreamCreateWithFlags(&cell.gpu_stream, cudaStreamNonBlocking), false, "cuda stream create failed");
+        CHECK_MUSA_ERROR_RETURN(
+            musaMallocHost(&cell.h_iovs, iovs_byte_size), false, "musaMallocHost [%zu] bytes failed", iovs_byte_size);
+        CHECK_MUSA_ERROR_RETURN(
+            musaMalloc(&cell.d_iovs, iovs_byte_size), false, "musaMalloc [%zu] byte failed", iovs_byte_size);
+        CHECK_MUSA_ERROR_RETURN(
+            musaMalloc(&cell.d_crcs, crcs_byte_size), false, "musaMalloc [%zu] byte failed", crcs_byte_size);
+        CHECK_MUSA_ERROR_RETURN(
+            musaStreamCreateWithFlags(&cell.gpu_stream, musaStreamNonBlocking), false, "musa stream create failed");
         cell_queue_.push(&cell);
     }
     KVCM_LOG_INFO(
