@@ -96,6 +96,10 @@ class HiCacheKVCM(HiCacheStorage):
         # manager
         self.block_size = self.mem_pool_host.page_size
 
+        # Detect extra pools early — _tp_rank_to_spec_name depends on these.
+        self.has_mamba = PoolName.MAMBA in self.registered_pools
+        self.has_indexer = getattr(PoolName, "INDEXER", None) is not None and PoolName.INDEXER in self.registered_pools
+
         self.location_spec_size = kv_pool.get_size_per_token() * self.block_size
         self.location_spec_infos = [{
             "name": self._tp_rank_to_spec_name(rank),
@@ -107,7 +111,6 @@ class HiCacheKVCM(HiCacheStorage):
         self.location_spec_groups = [{"name": self._get_kv_spec_group(), "spec_names": kv_spec_names}]
 
         # Mamba/Linear specs
-        self.has_mamba = PoolName.MAMBA in self.registered_pools
         if self.has_mamba:
             mamba_pool = self.registered_pools[PoolName.MAMBA]
             self.mamba_spec_size = mamba_pool.get_size_per_token()
@@ -123,7 +126,6 @@ class HiCacheKVCM(HiCacheStorage):
             })
 
         # Indexer specs (NSA/DSA)
-        self.has_indexer = PoolName.INDEXER in self.registered_pools
         if self.has_indexer:
             indexer_pool = self.registered_pools[PoolName.INDEXER]
             self.indexer_spec_size = indexer_pool.get_size_per_token() * self.block_size
@@ -438,6 +440,8 @@ class HiCacheKVCM(HiCacheStorage):
 
         # Prepare keys
         block_keys, len_prefix, len_new = self._prepare_block_keys(keys, extra_info)
+        local_len_new = len_new        # Preserve local key count for return value
+        local_hash = hash((len_prefix, len_new, *block_keys))  # Hash covers prefix/new boundary + all keys
 
         # Start write cache
         if self.tp_rank == 0:
@@ -461,29 +465,43 @@ class HiCacheKVCM(HiCacheStorage):
 
             if self.tp_world_size > 1:
                 torch.distributed.broadcast_object_list(
-                    [result], src=0, group=self.storage_tp_group
+                    [result, len_prefix, len_new, local_hash], src=0, group=self.storage_tp_group
                 )
         else:
-            recv = [None]
+            recv = [None, None, None, None]
             torch.distributed.broadcast_object_list(
                 recv, src=0, group=self.storage_tp_group
             )
-            result = recv[0]
+            result, len_prefix, len_new, rank0_hash = recv
 
         logger.debug(f"start_write_cache {result=}")
 
+        # All ranks now share rank 0's len_prefix/len_new so that
+        # _parse_block_mask produces the same save_indices everywhere,
+        # preventing control-flow divergence (and NCCL hangs).
+        # We also compare a hash of the full block_keys list: if a non-rank-0
+        # rank's local block_keys differ from rank 0's, writing would corrupt
+        # storage. The rank still participates in all_reduce with all-zero
+        # flags so NCCL doesn't hang.
+        skip_transfer = False
+        if self.tp_rank != 0 and local_hash != rank0_hash:
+            logger.warning(f"_batch_set: local block_keys hash ({local_hash}) != "
+                           f"rank 0 hash ({rank0_hash}), inputs diverged across TP ranks. "
+                           f"local_block_keys={block_keys}")
+            skip_transfer = True
+
         if result is None:
-            return [False] * len_new
+            return [False] * local_len_new
 
         locations = result["locations"]
         write_session_id = result["write_session_id"]
         block_mask = result["block_mask"]
-        save_indices = self._parse_block_mask(block_mask, len_prefix, len_new)
+        parsed = self._parse_block_mask(block_mask, len_prefix, len_new)
 
         finish_trace_id = f"finish-{trace_id}"
 
-        # None means inconsistent manager state — treat as write failure.
-        if save_indices is None:
+        # None means truly broken manager data — treat as write failure.
+        if parsed is None:
             logger.warning(f"_batch_set: inconsistent block_mask from manager, "
                            f"aborting write session {write_session_id}")
             if self.tp_rank == 0:
@@ -499,8 +517,9 @@ class HiCacheKVCM(HiCacheStorage):
                     )
                 except Exception as e:
                     logger.error(f"finish_write_cache failed: {e}")
-            return [False] * len_new
+            return [False] * local_len_new
 
+        save_indices, prefix_write_count = parsed
         unmatched = len(save_indices)
 
         # Early return if all new blocks are already cached.
@@ -517,49 +536,79 @@ class HiCacheKVCM(HiCacheStorage):
                     )
                 except Exception as e:
                     logger.error(f"finish_write_cache failed: {e}")
-            return [True] * len_new
+            return [False] * local_len_new if skip_transfer else [True] * local_len_new
 
-        assert unmatched == len(locations)
+        assert unmatched + prefix_write_count == len(locations)
 
         # Data transfer preparation and execution.
+        # Skip prefix locations — sglang cannot write prefix blocks.
+        # Best-effort: each rank writes only the blocks it has local data for.
+        # A per-block flag vector is all_reduced (MIN) so only blocks written
+        # by ALL ranks are considered successful.
         # Wrapped in try-except so that every rank always reaches the
         # all_reduce below, preventing cross-rank NCCL/gloo hangs.
-        try:
-            buffer_ptrs, buffer_sizes = self.mem_pool_host.get_page_buffer_meta(host_indices)
-            buffer_ptrs = [buffer_ptr for i, buffer_ptr in enumerate(buffer_ptrs) if (i // self.kv_factor) in save_indices]
-            buffer_sizes = [buffer_size for i, buffer_size in enumerate(
-                buffer_sizes) if (i // self.kv_factor) in save_indices]
+        new_locations = locations[prefix_write_count:]
+        per_block_flags = torch.zeros(unmatched, dtype=torch.int)
+        if skip_transfer:
+            # This rank's block_keys diverged from rank 0 — writing would
+            # corrupt storage. Keep per_block_flags as all-zero and still
+            # participate in all_reduce below.
+            logger.warning("_batch_set: skipping data transfer on this rank due to input divergence")
+        else:
+            try:
+                buffer_ptrs, buffer_sizes = self.mem_pool_host.get_page_buffer_meta(host_indices)
+                local_block_count = len(buffer_ptrs) // self.kv_factor
 
-            # Extract URIs and prepare buffers
-            uris = self._extract_uris(locations)
-            buffers = self._prepare_buffers(buffer_ptrs, buffer_sizes)
-            assert len(uris) == len(buffers)
-            # Perform data transfer
-            start_time = time.perf_counter()
-            result = self.transfer_client.SaveKvCaches(uris, buffers)
-            end_time = time.perf_counter()
-            self.backup_pgs.append(unmatched)
-            self.backup_bandwidth.append(unmatched * self.location_spec_size / (1 << 30) / (end_time - start_time))
-            logger.debug(f"SaveKvCaches {result=}")
+                # Determine which save_indices have local data available
+                valid_save_mask = [(idx < local_block_count) for idx in save_indices]
+                valid_save_set = set(idx for idx, valid in zip(save_indices, valid_save_mask) if valid)
+                num_valid = sum(valid_save_mask)
 
-            flag = (result[0] == kvcm_py_client.ClientErrorCode.ER_OK)
-            if not flag:
-                logger.error(f"SaveKvCaches error: {result}")
-        except Exception as e:
-            logger.error(f"Data transfer (SaveKvCaches) failed: {e}")
-            flag = False
+                if num_valid > 0:
+                    buffer_ptrs = [ptr for i, ptr in enumerate(buffer_ptrs)
+                                   if (i // self.kv_factor) in valid_save_set]
+                    buffer_sizes = [sz for i, sz in enumerate(buffer_sizes)
+                                    if (i // self.kv_factor) in valid_save_set]
 
-        # Finish write cache
+                    # Extract URIs only for blocks with local data
+                    valid_locations = [loc for loc, valid in zip(new_locations, valid_save_mask) if valid]
+                    uris = self._extract_uris(valid_locations)
+                    buffers = self._prepare_buffers(buffer_ptrs, buffer_sizes)
+                    assert len(uris) == len(buffers)
+
+                    # Perform data transfer
+                    start_time = time.perf_counter()
+                    result = self.transfer_client.SaveKvCaches(uris, buffers)
+                    end_time = time.perf_counter()
+                    self.backup_pgs.append(num_valid)
+                    self.backup_bandwidth.append(num_valid * self.location_spec_size / (1 << 30) / (end_time - start_time))
+                    logger.debug(f"SaveKvCaches {result=}")
+
+                    transfer_ok = (result[0] == kvcm_py_client.ClientErrorCode.ER_OK)
+                    if not transfer_ok:
+                        logger.error(f"SaveKvCaches error: {result}")
+                else:
+                    transfer_ok = True  # nothing to write on this rank
+
+                # Mark blocks this rank successfully wrote
+                for j, valid in enumerate(valid_save_mask):
+                    if valid and transfer_ok:
+                        per_block_flags[j] = 1
+
+            except Exception as e:
+                logger.error(f"Data transfer (SaveKvCaches) failed: {e}")
+                # per_block_flags remains all zeros
+
+        # Per-block all_reduce: only blocks ALL ranks wrote are marked success
         if self.tp_world_size > 1:
-            flag_tensor = torch.tensor(flag, dtype=torch.int)
             torch.distributed.all_reduce(
-                flag_tensor,
+                per_block_flags,
                 op=torch.distributed.ReduceOp.MIN,
                 group=self.storage_tp_group,
             )
-            flag = bool(flag_tensor.item())
 
-        finish_mask = [flag] * unmatched
+        new_block_success = [bool(per_block_flags[j]) for j in range(unmatched)]
+        finish_mask = [False] * prefix_write_count + new_block_success
         if self.tp_rank == 0:
             try:
                 self._manager_client.finish_write_cache(
@@ -572,19 +621,21 @@ class HiCacheKVCM(HiCacheStorage):
                 )
             except Exception as e:
                 logger.error(f"finish_write_cache failed: {e}")
-                # This sets flag = False on rank 0 only; other ranks
-                # still have the post-all_reduce value (True if data
-                # transfer succeeded). See the NOTE at the top of
-                # _batch_set for why we accept this inconsistency.
-                flag = False
+                # Mark all as failed on rank 0 for the return value.
+                new_block_success = [False] * unmatched
 
-        # Build result list: 1:1 positional mapping with input keys
-        # - keys not in save_indices → True
-        # - keys in save_indices → flag (True if save succeeded)
-        save_indices_set = set(save_indices)
+        # Build result list: 1:1 positional mapping with input keys.
+        # Use local_len_new so the return length matches the caller's input.
+        # - keys not in save_indices → True (assumed cached / no-op)
+        # - keys in save_indices → per-block success from all_reduce
+        # When input diverged (skip_transfer), nothing was written and the
+        # local keys don't match rank 0's — return all False.
+        if skip_transfer:
+            return [False] * local_len_new
+        block_flag_map = {save_indices[j]: new_block_success[j] for j in range(unmatched)}
         result_list = [
-            flag if i in save_indices_set else True
-            for i in range(len_new)
+            block_flag_map.get(i, True)
+            for i in range(local_len_new)
         ]
         return result_list
 
@@ -660,9 +711,9 @@ class HiCacheKVCM(HiCacheStorage):
                 block_mask = write_result["block_mask"]
                 finish_trace_id = f"finish-v2-{trace_id}"
 
-                save_indices = self._parse_block_mask(block_mask, 0, len(keys))
+                parsed = self._parse_block_mask(block_mask, 0, len(keys))
 
-                if save_indices is None:
+                if parsed is None:
                     logger.warning(f"batch_set_v2: inconsistent block_mask from manager, "
                                    f"aborting write session {write_session_id}")
                     if self.tp_rank == 0:
@@ -678,6 +729,7 @@ class HiCacheKVCM(HiCacheStorage):
                     results[transfer.name] = [False] * len(keys)
                     continue
 
+                save_indices, _prefix_write_count = parsed
                 unmatched = len(save_indices)
 
                 if unmatched == 0:
@@ -694,7 +746,7 @@ class HiCacheKVCM(HiCacheStorage):
                     results[transfer.name] = [True] * len(keys)
                     continue
 
-                assert len(save_indices) == len(locations)
+                assert len(save_indices) + _prefix_write_count == len(locations)
 
                 # Data transfer preparation and execution.
                 # Wrapped in try-except so that every rank always reaches the
@@ -923,24 +975,31 @@ class HiCacheKVCM(HiCacheStorage):
             buffers.append(buffer)
         return buffers
 
-    def _parse_block_mask(self, block_mask: dict, len_prefix: int, len_new: int) -> Optional[List[int]]:
+    def _parse_block_mask(self, block_mask: dict, len_prefix: int, len_new: int) -> Optional[tuple[List[int], int]]:
         """Parse block_mask from manager to determine which new-block indices need writing.
 
         Returns:
-            List[int]: indices (relative to new blocks) that need writing.
-                       Empty list means all new blocks are already cached.
-            None: manager returned an inconsistent state; caller should treat
-                  as a write failure (safe fallback).
+            tuple[List[int], int]:
+                - save_indices: indices (relative to new blocks) that need writing.
+                  Empty list means all new blocks are already cached.
+                - prefix_write_count: number of prefix blocks the manager wants
+                  written that we cannot fulfil (best-effort skip).
+            None: manager returned truly broken data (e.g. incomplete bool_masks);
+                  caller should treat as a total write failure.
         """
         save_indices = []
+        prefix_write_count = 0
         if "offset" in block_mask:
             offset = block_mask["offset"]
             if offset < len_prefix:
-                # Inconsistent: offset behind prefix boundary.
+                # Best-effort: prefix blocks [offset, len_prefix) can't be written
+                # by sglang (no data available), but new blocks can still proceed.
                 logger.warning(f"_parse_block_mask: offset {offset} < len_prefix {len_prefix}, "
-                               "treating as inconsistent state")
-                return None
-            save_indices.extend(range(offset, len_prefix + len_new))
+                               "prefix blocks will be skipped (best-effort)")
+                prefix_write_count = len_prefix - offset
+                save_indices.extend(range(len_prefix, len_prefix + len_new))
+            else:
+                save_indices.extend(range(offset, len_prefix + len_new))
         else:
             # False: need to store
             bool_masks = block_mask.get("bool_masks", {}).get("values", [])
@@ -949,15 +1008,14 @@ class HiCacheKVCM(HiCacheStorage):
                 logger.warning(f"_parse_block_mask: bool_masks length {len(bool_masks)} < "
                                f"expected {len_prefix + len_new}, treating as inconsistent state")
                 return None
-            if not all(bool_masks[:len_prefix]):
-                # Inconsistent: prefix blocks not fully cached.
-                logger.warning("_parse_block_mask: prefix blocks not fully cached in bool_masks, "
-                               "treating as inconsistent state")
-                return None
+            prefix_write_count = sum(1 for v in bool_masks[:len_prefix] if not v)
+            if prefix_write_count > 0:
+                logger.warning(f"_parse_block_mask: {prefix_write_count} prefix blocks "
+                               "not cached in bool_masks, will be skipped (best-effort)")
             max_index = max([i for i, x in enumerate(bool_masks) if not x], default=-1)
             save_indices.extend([i for i in range(len_prefix, max_index + 1) if not bool_masks[i]])
         save_indices = [(i - len_prefix) for i in save_indices if i >= len_prefix]
-        return save_indices
+        return save_indices, prefix_write_count
 
     def _extract_single_spec_uri(self, location, spec_name: str):
         """Extract the URI for a named spec from a single location dict."""
