@@ -112,9 +112,10 @@ class HiCacheKVCM(HiCacheStorage):
             "size": self.location_spec_size,
         } for rank in range(self.tp_size)]
 
-        # LocationSpecGroup: KV specs only
+        # LocationSpecGroup: KV specs always prepared, but only sent when
+        # extra pools exist (backward compat with older managers).
         kv_spec_names = [self._tp_rank_to_spec_name(rank) for rank in range(self.tp_size)]
-        self.location_spec_groups = [{"name": self._get_kv_spec_group(), "spec_names": kv_spec_names}]
+        self.location_spec_groups = []
 
         # Mamba/Linear specs
         if self.has_mamba:
@@ -125,7 +126,8 @@ class HiCacheKVCM(HiCacheStorage):
                 name = self._tp_rank_to_linear_spec_name(rank)
                 self.location_spec_infos.append({"name": name, "size": self.mamba_spec_size})
                 linear_spec_names.append(name)
-            self.mamba_location_spec_name = self._tp_rank_to_linear_spec_name(self.tp_rank)
+            mamba_spec_rank = 0 if self.is_mla_model else self.tp_rank
+            self.mamba_location_spec_name = self._tp_rank_to_linear_spec_name(mamba_spec_rank)
             self.location_spec_groups.append({
                 "name": self._get_extra_pool_spec_group(PoolName.MAMBA),
                 "spec_names": linear_spec_names,
@@ -140,10 +142,17 @@ class HiCacheKVCM(HiCacheStorage):
                 name = self._tp_rank_to_indexer_spec_name(rank)
                 self.location_spec_infos.append({"name": name, "size": self.indexer_spec_size})
                 indexer_spec_names.append(name)
-            self.indexer_location_spec_name = self._tp_rank_to_indexer_spec_name(self.tp_rank)
+            indexer_spec_rank = 0 if self.is_mla_model else self.tp_rank
+            self.indexer_location_spec_name = self._tp_rank_to_indexer_spec_name(indexer_spec_rank)
             self.location_spec_groups.append({
                 "name": self._get_extra_pool_spec_group(PoolName.INDEXER),
                 "spec_names": indexer_spec_names,
+            })
+
+        if self.location_spec_groups:
+            self.location_spec_groups.insert(0, {
+                "name": self._get_kv_spec_group(),
+                "spec_names": kv_spec_names,
             })
 
         self.deployment = {
@@ -162,8 +171,9 @@ class HiCacheKVCM(HiCacheStorage):
             "model_deployment": self.deployment,
             "block_size": self.block_size,
             "location_spec_infos": self.location_spec_infos,
-            "location_spec_groups": self.location_spec_groups,
         }
+        if self.location_spec_groups:
+            register_request["location_spec_groups"] = self.location_spec_groups
         # TODO: check conflict and update
         register_response = self._manager_client.register_instance(register_request)
         logger.debug(f"register_instance {register_response=}")
@@ -171,7 +181,9 @@ class HiCacheKVCM(HiCacheStorage):
         self.storage_configs = register_response["storage_configs"]
 
         # data transfer setup
-        self.location_spec_name = self._tp_rank_to_spec_name(self.tp_rank)
+        # MLA: only rank 0 writes, so all ranks use rank 0's spec for read/write
+        kv_spec_rank = 0 if self.is_mla_model else self.tp_rank
+        self.location_spec_name = self._tp_rank_to_spec_name(kv_spec_rank)
 
         self.write_timeout_seconds = self.extra_config.get("write_timeout_seconds", 30)
 
@@ -469,10 +481,14 @@ class HiCacheKVCM(HiCacheStorage):
                 logger.error(f"start_write_cache failed: {e}")
                 result = None
 
-            if self.tp_world_size > 1:
+            if self.tp_world_size > 1 and not self.is_mla_model:
                 torch.distributed.broadcast_object_list(
                     [result, len_prefix, len_new, local_hash], src=0, group=self.storage_tp_group
                 )
+        elif self.is_mla_model:
+            logger.warning(f"_batch_set called on non-rank-0 (tp_rank={self.tp_rank}) "
+                           f"for MLA model; only rank 0 should write. Returning all False.")
+            return [False] * len_new
         else:
             recv = [None, None, None, None]
             torch.distributed.broadcast_object_list(
@@ -606,7 +622,7 @@ class HiCacheKVCM(HiCacheStorage):
                 # per_block_flags remains all zeros
 
         # Per-block all_reduce: only blocks ALL ranks wrote are marked success
-        if self.tp_world_size > 1:
+        if self.tp_world_size > 1 and not self.is_mla_model:
             torch.distributed.all_reduce(
                 per_block_flags,
                 op=torch.distributed.ReduceOp.MIN,
@@ -698,10 +714,15 @@ class HiCacheKVCM(HiCacheStorage):
                     except Exception as e:
                         logger.error(f"start_write_cache failed on rank 0: {trace_id=} {e=}")
                         write_result = None
-                    if self.tp_world_size > 1:
+                    if self.tp_world_size > 1 and not self.is_mla_model:
                         torch.distributed.broadcast_object_list(
                             [write_result], src=0, group=self.storage_tp_group
                         )
+                elif self.is_mla_model:
+                    logger.warning(f"batch_set_v2 called on non-rank-0 (tp_rank={self.tp_rank}) "
+                                   f"for MLA model; only rank 0 should write. Returning all False.")
+                    results[transfer.name] = [False] * len(keys)
+                    continue
                 else:
                     recv = [None]
                     torch.distributed.broadcast_object_list(
@@ -789,7 +810,7 @@ class HiCacheKVCM(HiCacheStorage):
                     logger.error(f"Data transfer v2 (SaveKvCaches) failed: {transfer.name} {e}")
                     flag = False
 
-                if self.tp_world_size > 1:
+                if self.tp_world_size > 1 and not self.is_mla_model:
                     flag_tensor = torch.tensor(flag, dtype=torch.int)
                     torch.distributed.all_reduce(
                         flag_tensor,
