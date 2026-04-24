@@ -42,9 +42,15 @@ enum StorageType {
     ST_TAIRMEMPOOL = 3;
     ST_NFS = 4;
     ST_VCNS_3FS = 5;
+    ST_DUMMY = 6;
 }
 
 message LocalStorageSpec {}
+
+message DummyStorageSpec {
+    string root_path = 1;
+    int32 key_count_per_file = 2;
+}
 
 // 3fs
 message ThreeFSStorageSpec {
@@ -100,6 +106,7 @@ message StorageConfig {
         TairMemPoolStorageSpec tair_mem_pool = 5;
         NfsStorageSpec nfs = 6;
         VcnsThreeFSStorageSpec vcnsthreefs = 7;
+        DummyStorageSpec dummy = 9;
     }
     bool check_storage_available_when_open = 8;
 }

@@ -41,6 +41,7 @@ enum StorageType {
     ST_TAIRMEMPOOL = 3;
     ST_NFS = 4;
     ST_VCNS_3FS = 5;
+    ST_DUMMY = 6;
 }
 
 // 使用URI统一多种存储表示，由client或者connector负责解析
@@ -92,6 +93,11 @@ message InstanceInfo {
 }
 
 message LocalStorageSpec {}
+
+message DummyStorageSpec {
+    string root_path = 1;
+    int32 key_count_per_file = 2;
+}
 
 // 3fs
 message ThreeFSStorageSpec {
@@ -147,6 +153,7 @@ message StorageConfig {
         TairMemPoolStorageSpec tair_mem_pool = 5;
         NfsStorageSpec nfs = 6;
         ThreeFSStorageSpec vcnsthreefs = 7;
+        DummyStorageSpec dummy = 9;
     }
     bool check_storage_available_when_open = 8;
 }
