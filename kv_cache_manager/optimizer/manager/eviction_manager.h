@@ -23,11 +23,16 @@ public:
     std::unordered_map<std::string, std::vector<BlockEntry *>>
     EvictByMode(const std::string &instance_id, const OptInstanceGroupConfig &instance_group_config);
 
+    std::unordered_map<std::string, std::vector<BlockEntry *>>
+    ActiveEvictExpired(const OptInstanceGroupConfig &instance_group_config, int64_t current_timestamp);
+
     size_t GetCurrentGroupUsage(const OptInstanceGroupConfig &instance_group_config) const;
     size_t GetCurrentInstanceUsage(const std::string &instance_id) const;
     size_t GetExcessUsageForInstanceInGroup(const OptInstanceGroupConfig &instance_group_config) const;
 
 private:
+    std::shared_ptr<EvictionPolicy> GetPolicyOrLog(const std::string &instance_id, const char *context) const;
+
     std::unordered_map<std::string, std::vector<BlockEntry *>>
     EvictByGroupRough(const std::string &instance_id, const OptInstanceGroupConfig &instance_group_config);
     std::unordered_map<std::string, std::vector<BlockEntry *>>

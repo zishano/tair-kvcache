@@ -81,9 +81,19 @@ void OptimizerRunner::HandleGetLocation(const GetLocationSchemaTrace &trace) {
         return;
     }
 
+    // 读请求前统一清理过期 block，并做节点清理（TTL 使用逻辑过期时刻记录）
+    auto expired_evicted_blocks = indexer_manager_->EvictExpiredBeforeAccess(instance_id, trace.timestamp_us());
+    indexer_manager_->CleanEvictedBlocks(expired_evicted_blocks, trace.timestamp_us(), true);
+
     std::vector<std::vector<int64_t>> external_hits;
     std::vector<std::vector<int64_t>> internal_hits;
-    indexer->PrefixQuery(trace.keys(), trace.block_mask(), trace.timestamp_us(), external_hits, internal_hits);
+    bool refresh_ttl_on_read = true;
+    auto it = instance_ttl_refresh_on_read_.find(instance_id);
+    if (it != instance_ttl_refresh_on_read_.end()) {
+        refresh_ttl_on_read = it->second;
+    }
+    indexer->PrefixQuery(
+        trace.keys(), trace.block_mask(), trace.timestamp_us(), external_hits, internal_hits, refresh_ttl_on_read);
 
     // ---- 构造 ReadRecord 并委托给 StatsCollector ----
     ReadRecord record = BuildReadRecord(instance_id, trace.timestamp_us());
@@ -116,10 +126,21 @@ void OptimizerRunner::HandleWriteCache(const WriteCacheSchemaTrace &trace) {
         return;
     }
 
-    auto result = indexer->InsertOnly(trace.keys(), trace.timestamp_us());
-    bool evicted = indexer_manager_->CheckAndEvict(instance_id, trace.timestamp_us());
-    if (evicted) {
-        KVCM_LOG_DEBUG("Eviction in %zu to instance_id: %s", trace.timestamp_us(), instance_id.c_str());
+    // 写请求前统一清理过期 block，并做节点清理（TTL 使用逻辑过期时刻记录）
+    auto expired_evicted_blocks = indexer_manager_->EvictExpiredBeforeAccess(instance_id, trace.timestamp_us());
+    indexer_manager_->CleanEvictedBlocks(expired_evicted_blocks, trace.timestamp_us(), true);
+
+    int64_t effective_ttl_us = trace.ttl_us();
+    auto ttl_disabled_it = instance_group_ttl_disabled_.find(instance_id);
+    if (ttl_disabled_it != instance_group_ttl_disabled_.end() && ttl_disabled_it->second) {
+        effective_ttl_us = -1;
+    }
+
+    auto result = indexer->InsertOnly(trace.keys(), trace.timestamp_us(), effective_ttl_us);
+    auto capacity_evicted_blocks = indexer_manager_->CheckAndEvict(instance_id);
+    indexer_manager_->CleanEvictedBlocks(capacity_evicted_blocks, trace.timestamp_us());
+    if (!capacity_evicted_blocks.empty()) {
+        KVCM_LOG_DEBUG("Eviction by capacity in %zu to instance_id: %s", trace.timestamp_us(), instance_id.c_str());
     }
 
     WriteRecord record;
@@ -138,9 +159,14 @@ void OptimizerRunner::HandleDialogTurn(const DialogTurnSchemaTrace &trace) {
         return;
     }
 
+    // DialogTurn 前统一清理过期 block，并做节点清理（TTL 使用逻辑过期时刻记录）
+    auto expired_evicted_blocks = indexer_manager_->EvictExpiredBeforeAccess(instance_id, trace.timestamp_us());
+    indexer_manager_->CleanEvictedBlocks(expired_evicted_blocks, trace.timestamp_us(), true);
+
     std::vector<std::vector<int64_t>> hits;
     indexer->InsertWithQuery(trace.total_keys(), trace.timestamp_us(), hits);
-    indexer_manager_->CheckAndEvict(instance_id, trace.timestamp_us());
+    auto capacity_evicted_blocks = indexer_manager_->CheckAndEvict(instance_id);
+    indexer_manager_->CleanEvictedBlocks(capacity_evicted_blocks, trace.timestamp_us());
 
     // ---- ReadRecord ----
     ReadRecord read_record = BuildReadRecord(instance_id, trace.timestamp_us());
