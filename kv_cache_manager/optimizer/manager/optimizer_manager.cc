@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
 
 #include "kv_cache_manager/common/logger.h"
 #include "kv_cache_manager/meta/cache_location.h"
@@ -13,6 +14,16 @@
 #include "kv_cache_manager/optimizer/eviction_policy/policy_factory.h"
 #include "kv_cache_manager/optimizer/trace_loader/trace_util.h"
 namespace kv_cache_manager {
+namespace {
+int64_t RequirePositiveInputLen(const char *api_name, int64_t input_len) {
+    if (input_len > 0) {
+        return input_len;
+    }
+    std::string message = std::string(api_name) + " requires positive input_len";
+    KVCM_LOG_ERROR("%s", message.c_str());
+    throw std::runtime_error(message);
+}
+} // namespace
 
 OptimizerManager::OptimizerManager(const OptimizerConfig &config,
                                    bool enable_lifecycle_tracking,
@@ -185,7 +196,10 @@ bool OptimizerManager::CreateRadixTreeIndex(const OptInstanceConfig &instance_co
                                             storage_configs,
                                             group_it->second.hierarchical_eviction_enabled(),
                                             group_it->second.tier_write_mode(),
-                                            default_ttl_ns)) {
+                                            default_ttl_ns,
+                                            static_cast<size_t>(group_it->second.selective_write_threshold()),
+                                            group_it->second.tier_access_propagation_enabled(),
+                                            group_it->second.tier_flow_strategies())) {
         KVCM_LOG_ERROR("Failed to create optimizer indexer for instance_id: %s", instance_config.instance_id().c_str());
         return false;
     }
@@ -205,14 +219,12 @@ WriteCacheRes OptimizerManager::WriteCache(const std::string &instance_id,
                                            const std::string &trace_id,
                                            const int64_t timestamp,
                                            const std::vector<int64_t> &block_ids,
-                                           const std::vector<int64_t> &token_ids,
                                            const int64_t ttl_seconds) {
     WriteCacheSchemaTrace trace;
     trace.set_instance_id(instance_id);
     trace.set_trace_id(trace_id);
     trace.set_timestamp_ns(timestamp);
     trace.set_keys(block_ids);
-    trace.set_tokens(token_ids);
 
     int64_t ttl_us = (ttl_seconds > 0) ? ttl_seconds * 1000000 : ttl_seconds;
 
@@ -238,14 +250,14 @@ GetCacheLocationRes OptimizerManager::GetCacheLocation(const std::string &instan
                                                        const std::string &trace_id,
                                                        const int64_t timestamp,
                                                        const std::vector<int64_t> &block_ids,
-                                                       const std::vector<int64_t> &token_ids,
-                                                       const BlockMask &block_mask) {
+                                                       const BlockMask &block_mask,
+                                                       const int64_t input_len) {
     GetLocationSchemaTrace trace;
     trace.set_instance_id(instance_id);
     trace.set_trace_id(trace_id);
     trace.set_timestamp_ns(timestamp);
     trace.set_keys(block_ids);
-    trace.set_tokens(token_ids);
+    trace.set_input_len(RequirePositiveInputLen("GetCacheLocation", input_len));
     trace.set_block_mask(block_mask);
     optimizer_runner_->HandleGetLocation(trace);
     stats_collector_->UpdateTimestamp(instance_id, timestamp);

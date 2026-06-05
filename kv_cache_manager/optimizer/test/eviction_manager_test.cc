@@ -270,6 +270,29 @@ TEST_F(OptEvictionManagerTest, GetExcessUsageNonTiered) {
     EXPECT_GT(excess, 0);
 }
 
+TEST_F(OptEvictionManagerTest, NegativeQuotaCapacityMeansUnlimited) {
+    auto instance_config = CreateTestInstanceConfig("instance1");
+    auto tier_configs = CreateTestTierConfigs();
+    auto instance_group_config = CreateTestInstanceGroupConfig();
+    instance_group_config.set_quota_capacity(-1);
+    instance_group_config.set_used_percentage(1.0);
+
+    auto *pg = manager_->CreateAndRegisterEvictionPolicy(instance_config, tier_configs, false);
+    ASSERT_NE(pg, nullptr);
+
+    auto front_policy = pg->GetPolicyByIndex(0);
+    for (int i = 0; i < 100; i++) {
+        BlockEntry block;
+        block.key = i;
+        block.last_access_time = i * 100;
+        block.writing_time = i * 100;
+        front_policy->OnBlockWritten(&block);
+    }
+
+    auto excess = manager_->GetExcessUsage(instance_group_config, std::nullopt);
+    EXPECT_EQ(excess, 0);
+}
+
 TEST_F(OptEvictionManagerTest, GetExcessUsageTiered) {
     auto instance_config = CreateTestInstanceConfig("instance1");
     auto tier_configs = CreateTestTierConfigs();
@@ -297,6 +320,31 @@ TEST_F(OptEvictionManagerTest, GetExcessUsageTiered) {
     // tier0 应该有超额使用
     excess = manager_->GetExcessUsage(instance_group_config, size_t(0));
     EXPECT_GT(excess, 0);
+}
+
+TEST_F(OptEvictionManagerTest, NegativeTierCapacityMeansUnlimited) {
+    auto instance_config = CreateTestInstanceConfig("instance1");
+    auto tier_configs = CreateTestTierConfigs();
+    tier_configs[0].set_capacity(-1);
+    auto instance_group_config = CreateTestInstanceGroupConfig();
+    instance_group_config.set_hierarchical_eviction_enabled(true);
+    instance_group_config.set_used_percentage(1.0);
+    instance_group_config.set_storages(tier_configs);
+
+    auto *pg = manager_->CreateAndRegisterEvictionPolicy(instance_config, tier_configs, true);
+    ASSERT_NE(pg, nullptr);
+
+    auto front_policy = pg->GetPolicyByIndex(0);
+    for (int i = 0; i < 100; i++) {
+        BlockEntry block;
+        block.key = i;
+        block.last_access_time = i * 100;
+        block.writing_time = i * 100;
+        front_policy->OnBlockWritten(&block);
+    }
+
+    auto excess = manager_->GetExcessUsage(instance_group_config, size_t(0));
+    EXPECT_EQ(excess, 0);
 }
 
 TEST_F(OptEvictionManagerTest, EvictFromNonExistentInstance) {
@@ -349,9 +397,11 @@ TEST_F(OptEvictionManagerTest, ActiveEvictExpiredShouldNotTriggerFallbackEvictio
     alive_block.ttl_ns = 1000;
     alive_block.location_map["tier1"] = TierStat{};
 
-    policy->OnBlockWritten(&expired_block);
-    policy->OnBlockWritten(&alive_block);
-    policy->OnBlockAccessedWithOptions(&alive_block, 1000, true); // 推进时钟，确保 expired_block 过期
+    auto tier_policy = policy->GetPolicyByIndex(0);
+    ASSERT_NE(tier_policy, nullptr);
+    tier_policy->OnBlockWritten(&expired_block);
+    tier_policy->OnBlockWritten(&alive_block);
+    tier_policy->OnBlockAccessedWithOptions(&alive_block, 1000, true); // 推进时钟，确保 expired_block 过期
 
     OptInstanceGroupConfig ttl_group;
     ttl_group.set_group_name("ttl_group");
@@ -384,7 +434,9 @@ TEST_F(OptEvictionManagerTest, ActiveEvictExpiredUsesCurrentTimestamp) {
     expired_block.last_access_time = 100;
     expired_block.ttl_ns = 10;
     expired_block.location_map["tier1"] = TierStat{};
-    policy->OnBlockWritten(&expired_block);
+    auto tier_policy = policy->GetPolicyByIndex(0);
+    ASSERT_NE(tier_policy, nullptr);
+    tier_policy->OnBlockWritten(&expired_block);
 
     // 这里不通过 OnBlockAccessed 推进策略时钟，仅依赖 ActiveEvictExpired 的 current_timestamp。
     auto ttl_group = OptInstanceGroupConfig();
@@ -419,8 +471,10 @@ TEST_F(OptEvictionManagerTest, ActiveEvictExpiredSkipsNonTtlPolicyInV1) {
     alive_block.ttl_ns = 10000;
     alive_block.location_map["tier1"] = TierStat{};
 
-    policy->OnBlockWritten(&expired_block);
-    policy->OnBlockWritten(&alive_block);
+    auto tier_policy = policy->GetPolicyByIndex(0);
+    ASSERT_NE(tier_policy, nullptr);
+    tier_policy->OnBlockWritten(&expired_block);
+    tier_policy->OnBlockWritten(&alive_block);
 
     OptInstanceGroupConfig group_cfg;
     group_cfg.set_group_name("mixed_group");

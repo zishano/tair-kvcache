@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Dict, Optional, List, Tuple, Any
 from datetime import datetime
 from tqdm import tqdm
-from multiprocessing import Pool, cpu_count
+from multiprocessing import cpu_count
 import functools
 
 # 添加父目录到路径
@@ -50,6 +50,7 @@ def _process_chunk_text(
     tokenizer_path: str,
     model_name: Optional[str],
     block_size: int,
+    truncate: bool,
     default_instance_id: str,
     time_field: str,
     content_field: str
@@ -106,20 +107,19 @@ def _process_chunk_text(
             token_ids = smart_tokenize(tokenizer, content, use_chat_template=True)
             
             # 转换为block IDs
-            block_ids = tokens_to_block_ids(token_ids, block_size=block_size)
+            block_ids = tokens_to_block_ids(token_ids, block_size=block_size, truncate=truncate)
             
             # 生成Get+Write traces
             get_trace = converter._create_get_trace(
                 timestamp_ns=timestamp_ns,
                 keys=block_ids,
                 instance_id=default_instance_id,
-                tokens=token_ids
+                input_len=len(token_ids),
             )
             write_trace = converter._create_write_trace(
                 timestamp_ns=timestamp_ns + 1,
-                keys=block_ids,
+                keys=get_trace['keys'],
                 instance_id=default_instance_id,
-                tokens=token_ids
             )
             traces.extend([get_trace, write_trace])
         
@@ -149,13 +149,13 @@ class TextTraceConverter(BaseConverter):
         time_field: str = 'time',
         content_field: str = 'prompt_messages',
         num_workers: int = None,
-        keep_tokens: bool = False,
         **kwargs  # 忽略其他参数（如 model_mapping）
     ):
-        super().__init__(default_instance_id, instance_block_sizes, mode, keep_tokens)
+        super().__init__(default_instance_id, instance_block_sizes, mode)
         self.block_size = self.get_block_size(default_instance_id)  # 获取该instance的block_size
         self.time_field = time_field
         self.content_field = content_field
+        self.truncate = kwargs.get('truncate', True)
         self.tokenizer_path = tokenizer_path
         self.model_name = model_name
         
@@ -197,6 +197,7 @@ class TextTraceConverter(BaseConverter):
             tokenizer_path=self.tokenizer_path,
             model_name=self.model_name,
             block_size=self.block_size,
+            truncate=self.truncate,
             default_instance_id=self.default_instance_id,
             time_field=self.time_field,
             content_field=self.content_field
@@ -249,51 +250,3 @@ class TextTraceConverter(BaseConverter):
               f"({len(all_traces)/total_elapsed:.0f} traces/s)")
         
         return all_traces
-
-    def _extract_timestamp(self, data: dict) -> int:
-        """提取并转换时间戳"""
-        ts_str = data.get(self.time_field, '')
-
-        # 支持格式: "YYYY-MM-DD HH:MM:SS.ffffff"
-        ts_str = ts_str.replace(',', '.')
-        dt = datetime.strptime(ts_str, "%Y-%m-%d %H:%M:%S.%f")
-
-        return int(dt.timestamp() * 1_000_000_000)
-
-    def _extract_content(self, data: dict):
-        """提取内容字段"""
-        content = data.get(self.content_field)
-        if content is None:
-            raise ValueError(f"Missing field: {self.content_field}")
-        return content
-
-    def _tokenize_content(self, content) -> list:
-        """对内容进行tokenize (使用智能tokenization)"""
-        return smart_tokenize(self.tokenizer, content, use_chat_template=True)
-
-    def _generate_optimizer_traces(self, timestamp_ns: int, block_ids: list, tokens: list = None) -> list:
-        """
-        生成Optimizer格式的Get+Write traces
-        
-        Args:
-            tokens: token IDs列表（由base层根据keep_tokens决定是否保留）
-        """
-        tokens = tokens or []
-        
-        # Get trace - 显式使用default_instance_id
-        get_trace = self._create_get_trace(
-            timestamp_ns=timestamp_ns,
-            keys=block_ids,
-            instance_id=self.default_instance_id,
-            tokens=tokens
-        )
-
-        # Write trace (时间戳+1纳秒) - 显式使用default_instance_id
-        write_trace = self._create_write_trace(
-            timestamp_ns=timestamp_ns + 1,
-            keys=block_ids,
-            instance_id=self.default_instance_id,
-            tokens=tokens
-        )
-
-        return [get_trace, write_trace]

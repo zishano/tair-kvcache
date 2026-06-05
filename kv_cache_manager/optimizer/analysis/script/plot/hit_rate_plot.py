@@ -89,7 +89,6 @@ def plot_multi_instance_analysis(
     Args:
         csv_dir:             CSV 数据目录
         output_dir:          图表根输出目录，图表保存至 output_dir/timeseries/
-                             默认为 csv_dir（向后兼容）
         show_template:       是否在图上显示 SP 累计命中率线（需要 template_prefix_traces.csv）
         bytes_per_block_map: {instance_id: bytes_per_block}，不提供时存储量以 blocks 显示
     """
@@ -110,7 +109,16 @@ def plot_multi_instance_analysis(
         df = _ensure_hit_rate_timestamp_ns(df)
 
         # 数值化 + 排序
-        for c in ['CachedBlocksAllInstance', 'AccHitRate', 'AccRemoteHitRate', 'AccReadBlocks']:
+        for c in [
+            'CachedBlocks',
+            'AccReadBlocks',
+            'AccHitBlocks',
+            'AccHitRate',
+            'AccRemoteHitRate',
+            'AccInputTokens',
+            'AccHitTokens',
+            'AccRemoteHitTokens',
+        ]:
             if c in df.columns:
                 df[c] = pd.to_numeric(df[c], errors="coerce")
 
@@ -136,7 +144,17 @@ def plot_multi_instance_analysis(
         print("Error: No valid CSV data could be loaded")
         return
 
-    required_cols = ['TimestampNs', 'CachedBlocksAllInstance', 'AccHitRate', 'AccRemoteHitRate', 'AccReadBlocks']
+    required_cols = [
+        'TimestampNs',
+        'CachedBlocks',
+        'AccReadBlocks',
+        'AccHitBlocks',
+        'AccHitRate',
+        'AccRemoteHitRate',
+        'AccInputTokens',
+        'AccHitTokens',
+        'AccRemoteHitTokens',
+    ]
     for i, df in enumerate(dataframes):
         missing = [c for c in required_cols if c not in df.columns]
         if missing:
@@ -153,38 +171,69 @@ def plot_multi_instance_analysis(
     base_timestamps = np.unique(np.concatenate(all_t))
     base = pd.DataFrame({'t': base_timestamps})  # 用于merge_asof
 
+    def _instance_id_from_csv_name(instance_name: str) -> str:
+        suffix = "_hit_rates"
+        if instance_name.endswith(suffix):
+            return instance_name[:-len(suffix)]
+        return instance_name
+
+    def _lookup_bytes_per_block(instance_name: str):
+        if not bytes_per_block_map:
+            return None
+        instance_id = _instance_id_from_csv_name(instance_name)
+        for key in (instance_name, instance_id):
+            if key in bytes_per_block_map and bytes_per_block_map[key] > 0:
+                return bytes_per_block_map[key]
+        positive_values = {v for v in bytes_per_block_map.values() if v and v > 0}
+        if len(positive_values) == 1:
+            return next(iter(positive_values))
+        return None
+
+    def _align_state_series(d: pd.DataFrame, col: str, t0: float) -> np.ndarray:
+        updates = d[['t', col]].dropna(subset=['t', col]).sort_values('t')
+        if updates.empty:
+            return np.zeros(len(base_timestamps), dtype=float)
+        aligned = pd.merge_asof(
+            base,
+            updates,
+            on='t',
+            direction='backward',
+            allow_exact_matches=True,
+        )
+        arr = aligned[col].to_numpy(float)
+        # 该 instance 首次上报前不应继承其他 instance 的状态，容量贡献为 0。
+        arr[base_timestamps < t0] = 0.0
+        return np.nan_to_num(arr, nan=0.0)
+
     all_acc_sp_hit = []
     all_acc_hit, all_acc_remote_hit, all_time_ranges = [], [], []
-    # 用于瞬时命中率计算：累积读块数 / 累积命中块数（反推）
-    all_acc_read_blocks, all_acc_hit_blocks, all_acc_remote_hit_blocks = [], [], []
+    # 用于瞬时命中率计算：累积输入 token 数 / 累积命中 token 数
+    all_acc_input_tokens, all_acc_hit_tokens, all_acc_remote_hit_tokens = [], [], []
     all_acc_sp_hit = []
 
-    global_updates_list = []
-    tier_updates_lists = {col: [] for col in tier_block_cols}  # per-tier 更新列表
+    instance_storage_series = []
+    instance_bytes_per_block = []
+    tier_storage_series = {col: [] for col in tier_block_cols}
 
-    for df in dataframes:
+    for df, instance_name in zip(dataframes, instance_names):
         d = df.copy()
         d["t"] = (d["TimestampNs"] - min_timestamp) / 1e9
         d = d.sort_values('t')
-
-        # 反推累积命中块数：AccHitBlocks = AccHitRate × AccReadBlocks
-        d['AccHitBlocks']       = d['AccHitRate']       * d['AccReadBlocks']
-        d['AccRemoteHitBlocks'] = d['AccRemoteHitRate'] * d['AccReadBlocks']
-
-        global_updates_list.append(d[['t', 'CachedBlocksAllInstance']])
-
-        # 收集 per-tier 数据
-        for col in tier_block_cols:
-            if col in d.columns:
-                tier_updates_lists[col].append(d[['t', col]])
         t0, t1 = d['t'].iloc[0], d['t'].iloc[-1]
         all_time_ranges.append((t0, t1))
+        bpb = _lookup_bytes_per_block(instance_name)
+        instance_storage_series.append(_align_state_series(d, 'CachedBlocks', t0))
+        instance_bytes_per_block.append(bpb)
+
+        for col in tier_block_cols:
+            if col in d.columns:
+                tier_storage_series[col].append((_align_state_series(d, col, t0), bpb))
 
         # 真实对齐：取 <=t 的最后一次上报（ZOH），不插值
         aligned = pd.merge_asof(
             base,
             d[['t', 'AccHitRate', 'AccRemoteHitRate',
-               'AccReadBlocks', 'AccHitBlocks', 'AccRemoteHitBlocks']],
+               'AccInputTokens', 'AccHitTokens', 'AccRemoteHitTokens']],
             on='t',
             direction='backward',
             allow_exact_matches=True
@@ -192,14 +241,14 @@ def plot_multi_instance_analysis(
 
         mask_out = (aligned['t'] < t0)
         acc_cols = ['AccHitRate', 'AccRemoteHitRate',
-                    'AccReadBlocks', 'AccHitBlocks', 'AccRemoteHitBlocks']
+                    'AccInputTokens', 'AccHitTokens', 'AccRemoteHitTokens']
         aligned.loc[mask_out, acc_cols] = np.nan
 
         all_acc_hit.append(aligned['AccHitRate'].to_numpy(float))
         all_acc_remote_hit.append(aligned['AccRemoteHitRate'].to_numpy(float))
-        all_acc_read_blocks.append(aligned['AccReadBlocks'].to_numpy(float))
-        all_acc_hit_blocks.append(aligned['AccHitBlocks'].to_numpy(float))
-        all_acc_remote_hit_blocks.append(aligned['AccRemoteHitBlocks'].to_numpy(float))
+        all_acc_input_tokens.append(aligned['AccInputTokens'].to_numpy(float))
+        all_acc_hit_tokens.append(aligned['AccHitTokens'].to_numpy(float))
+        all_acc_remote_hit_tokens.append(aligned['AccRemoteHitTokens'].to_numpy(float))
 
     # ---- SP 累积命中率对齐 ----
     if show_template:
@@ -220,51 +269,33 @@ def plot_multi_instance_analysis(
     else:
         all_acc_sp_hit = [None] * len(instance_names)
 
-    global_updates = pd.concat(global_updates_list, ignore_index=True)
-    global_updates = global_updates.dropna(subset=['t', 'CachedBlocksAllInstance']).sort_values('t')
-
-    # 同一时刻可能多个instance都写了全局容量：聚合成一个值（median更稳健）
-    global_updates = (global_updates
-                    .groupby('t', as_index=False)['CachedBlocksAllInstance']
-                    .median())
-
-    # 对齐到base：在两次更新之间保持最后值（全局容量是状态量）
-    global_aligned = pd.merge_asof(
-        base,
-        global_updates,
-        on='t',
-        direction='backward',
-        allow_exact_matches=True
+    storage_in_gb = (
+        bool(bytes_per_block_map)
+        and bool(instance_storage_series)
+        and all(bpb is not None and bpb > 0 for bpb in instance_bytes_per_block)
     )
-
-    total_storage = global_aligned['CachedBlocksAllInstance'].to_numpy(float)
-    rep_bpb = None
-    if bytes_per_block_map:
-        rep_bpb = next(iter(bytes_per_block_map.values()))
-        if rep_bpb and rep_bpb > 0:
-            total_storage = total_storage * rep_bpb / (1024 ** 3)
-            storage_label = 'InstanceGroup Storage (GB)'
-        else:
-            rep_bpb = None
-            storage_label = 'InstanceGroup Storage (blocks)'
+    if storage_in_gb:
+        total_storage = np.sum(
+            [arr * bpb / (1024 ** 3) for arr, bpb in zip(instance_storage_series, instance_bytes_per_block)],
+            axis=0,
+        )
+        storage_label = 'InstanceGroup Storage (GB)'
     else:
+        total_storage = np.sum(instance_storage_series, axis=0)
         storage_label = 'InstanceGroup Storage (blocks)'
 
     # ---- per-tier 存储对齐 ----
     tier_storage = {}  # {tier_name: aligned_array}
     for col, tier_name in tier_block_cols.items():
-        if col not in tier_updates_lists or not tier_updates_lists[col]:
+        if col not in tier_storage_series or not tier_storage_series[col]:
             continue
-        tier_updates = pd.concat(tier_updates_lists[col], ignore_index=True)
-        tier_updates = tier_updates.dropna(subset=['t', col]).sort_values('t')
-        tier_updates = tier_updates.groupby('t', as_index=False)[col].median()
-        tier_aligned = pd.merge_asof(
-            base, tier_updates, on='t',
-            direction='backward', allow_exact_matches=True
-        )
-        arr = tier_aligned[col].to_numpy(float)
-        if rep_bpb and rep_bpb > 0:
-            arr = arr * rep_bpb / (1024 ** 3)
+        if storage_in_gb:
+            arr = np.sum(
+                [series * bpb / (1024 ** 3) for series, bpb in tier_storage_series[col]],
+                axis=0,
+            )
+        else:
+            arr = np.sum([series for series, _ in tier_storage_series[col]], axis=0)
         tier_storage[tier_name] = arr
 
     # ---- 画图 ----
@@ -298,7 +329,8 @@ def plot_multi_instance_analysis(
                 colors=[TIER_COLORS[i % len(TIER_COLORS)] for i in range(len(tier_names_ordered))],
                 alpha=0.35, step='post',
             )
-        y_upper = np.nanmax(total_storage) * 1.15 if np.any(~np.isnan(total_storage)) else 1
+        max_storage = np.nanmax(total_storage) if np.any(~np.isnan(total_storage)) else 0
+        y_upper = max(max_storage * 1.15, 1)
         ax.set_ylim(0, y_upper)
         ax.tick_params(axis='y', labelcolor='#1f77b4')
         ax.grid(True, alpha=0.3, linestyle='-', linewidth=0.5)
@@ -310,7 +342,7 @@ def plot_multi_instance_analysis(
         axr.tick_params(axis='y', labelcolor='#d62728')
         return axr
     
-    def window_hit_rate(timestamps, acc_hit_blocks, acc_read_blocks, window_seconds=60):
+    def window_hit_rate(timestamps, acc_hit_tokens, acc_input_tokens, window_seconds=60):
         """
         基于累积量差值计算时间窗口内的真实命中率。
 
@@ -326,8 +358,8 @@ def plot_multi_instance_analysis(
         相较逐点 for-loop 版本加速约 50 倍。
         """
         ts       = np.asarray(timestamps,      dtype=float)
-        hit_arr  = np.asarray(acc_hit_blocks,  dtype=float)
-        read_arr = np.asarray(acc_read_blocks, dtype=float)
+        hit_arr  = np.asarray(acc_hit_tokens,  dtype=float)
+        read_arr = np.asarray(acc_input_tokens, dtype=float)
 
         # 只保留真实上报点（非 nan）
         real_mask = ~np.isnan(read_arr)
@@ -411,14 +443,14 @@ def plot_multi_instance_analysis(
         # 基于累积量差值计算窗口命中率（正确权重 = 请求数，而非上报次数）
         hit_sm = window_hit_rate(
             base_timestamps,
-            all_acc_hit_blocks[i],
-            all_acc_read_blocks[i],
+            all_acc_hit_tokens[i],
+            all_acc_input_tokens[i],
             window_seconds,
         )
         remote_sm = window_hit_rate(
             base_timestamps,
-            all_acc_remote_hit_blocks[i],
-            all_acc_read_blocks[i],
+            all_acc_remote_hit_tokens[i],
+            all_acc_input_tokens[i],
             window_seconds,
         )
 

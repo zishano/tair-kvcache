@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -21,10 +22,14 @@ public:
                           const std::vector<OptTierConfig> &storage_configs,
                           bool hierarchical_eviction_enabled = false,
                           TierWriteMode tier_write_mode = TierWriteMode::WRITE_THROUGH,
-                          int64_t default_ttl_ns = 0);
+                          int64_t default_ttl_ns = 0,
+                          size_t selective_write_threshold = 2,
+                          bool tier_access_propagation_enabled = true,
+                          std::vector<TierFlowStrategy> tier_flow_strategies = {});
 
     std::shared_ptr<RadixTreeIndex> GetOptIndexer(const std::string &instance_id) const;
     std::unordered_map<std::string, std::shared_ptr<RadixTreeIndex>> GetAllOptIndexers() const;
+    size_t GetInstanceBlockSize(const std::string &instance_id) const;
 
     size_t GetOptIndexerSize() const;
 
@@ -53,6 +58,8 @@ public:
     void ClearAllCaches();
 
 private:
+    const OptInstanceGroupConfig *FindInstanceGroupConfig(const std::string &instance_id) const;
+
     std::unordered_map<std::string, std::shared_ptr<RadixTreeIndex>> opt_indexer_map_;
     std::shared_ptr<OptEvictionManager> eviction_manager_;
 

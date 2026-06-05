@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 #include <functional>
 #include <memory>
 #include <string>
@@ -16,13 +17,22 @@ namespace kv_cache_manager {
 class StatsCollector;
 
 void AppendBlockLocation(BlockEntry *block, const std::string &unique_name, int64_t timestamp);
+size_t CountInitialWriteTiers(size_t tier_count, const std::vector<TierFlowStrategy> &tier_flow_strategies);
+bool AppendBlockToTierChain(BlockEntry *block,
+                            size_t start_tier_idx,
+                            const std::vector<std::shared_ptr<EvictionPolicy>> &tier_policies,
+                            const std::vector<TierFlowStrategy> &tier_flow_strategies,
+                            int64_t timestamp);
 class RadixTreeIndex {
 public:
     // 新构造函数 (多 tier)
     RadixTreeIndex(const std::string &instance_id,
                    std::vector<std::shared_ptr<EvictionPolicy>> tier_policies,
                    TierWriteMode write_mode = TierWriteMode::WRITE_THROUGH,
-                   int64_t default_ttl_ns = 0);
+                   int64_t default_ttl_ns = 0,
+                   size_t selective_write_threshold = 2,
+                   bool tier_access_propagation_enabled = true,
+                   std::vector<TierFlowStrategy> tier_flow_strategies = {});
     // 兼容构造函数 (单 policy)
     RadixTreeIndex(const std::string &instance_id,
                    const std::shared_ptr<EvictionPolicy> &eviction_policy,
@@ -36,7 +46,7 @@ public:
 
     // ttl_ns: 0 = 使用 default_ttl_ns_，-1 = 禁用 TTL，>0 = 自定义纳秒
     InsertResult InsertOnly(const std::vector<int64_t> &block_keys, int64_t timestamp, int64_t ttl_ns = 0);
-    void PrefixQuery(const std::vector<int64_t> &block_keys,
+    bool PrefixQuery(const std::vector<int64_t> &block_keys,
                      const BlockMask &block_mask,
                      const int64_t timestamp,
                      QueryHit *query_hit = nullptr,
@@ -73,19 +83,25 @@ public:
     RadixTreeExport ExportForVisualization() const;
 
     const RadixTreeNode *GetRoot() const { return root_.get(); }
+    void set_enable_promote(bool enable) {
+        enable_promote_ = enable;
+        for (auto &strategy : tier_flow_strategies_) {
+            strategy.promote_enabled = enable;
+        }
+    }
 
 private:
     std::unique_ptr<RadixTreeNode> root_;
     std::vector<std::shared_ptr<EvictionPolicy>> tier_policies_; // 按 tier priority 排序
     std::vector<std::string> tier_names_;                        // 缓存 policy name
-    // 写入模式：WRITE_THROUGH = 所有 tier 都写，CASCADING = 仅写 tier 0，超出的通过 EvictionManager 级联降级
-    TierWriteMode write_mode_ = TierWriteMode::WRITE_THROUGH;
-    // 写入流量应落地的 tier 数，构造时结合 write_mode_ 与 tier 数一次性确定
-    // WRITE_THROUGH=全部层，CASCADING=仅 tier 0（单层退化为全部）
+    std::vector<TierFlowStrategy> tier_flow_strategies_;
+    // 写入流量应落地的 tier 数，构造时结合 tier_flow_strategies_ 与 tier 数一次性确定
+    // WRITE_THROUGH=全部层，CASCADING/WRITE_THROUGH_SELECTIVE=仅 tier 0（单层退化为全部）
     size_t write_tier_count_ = 0;
     std::string instance_id_;
     int64_t default_ttl_ns_ = 0;
     std::shared_ptr<StatsCollector> stats_collector_;
+    bool enable_promote_ = false;
 
 private:
     std::vector<BlockEntry *>
@@ -101,14 +117,21 @@ private:
 
     using WriteModify = std::function<std::vector<BlockEntry *>(const std::vector<int64_t> &, int64_t)>;
     WriteModify AppendEvictBlocks(std::unordered_map<int64_t, BlockEntry *> blocks_map, int64_t ttl_ns);
+    void AppendInitialBlockLocations(BlockEntry *block, int64_t timestamp) const;
 
     void WriteToTier(
         RadixTreeNode *node, const std::vector<int64_t> &block_keys, int64_t timestamp, int64_t ttl_ns, WriteModify cb);
 
-    void OnBlockAccessed(BlockEntry *block, int64_t timestamp, bool refresh_ttl_on_read = true);
+    bool OnBlockAccessed(BlockEntry *block, int64_t timestamp, bool refresh_ttl_on_read = true);
     bool IsBlockEvict(BlockEntry *block, int64_t timestamp) const;
 
     // per-tier 命中检测辅助方法
     void RecordTieredHit(BlockEntry *block, bool is_remote, QueryHit *query_hit) const;
+    bool PromoteToHigherTiers(BlockEntry *block, int64_t timestamp);
+    bool SelectiveWriteToNextTier(BlockEntry *block, size_t hit_tier_idx, int64_t timestamp);
+    void InitTierFlowStrategies(TierWriteMode write_mode,
+                                size_t selective_write_threshold,
+                                bool tier_access_propagation_enabled,
+                                std::vector<TierFlowStrategy> tier_flow_strategies);
 };
 } // namespace kv_cache_manager

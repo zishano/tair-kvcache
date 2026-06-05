@@ -13,6 +13,7 @@ import gc
 import json
 import os
 import shutil
+import sys
 import tempfile
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -28,7 +29,19 @@ from .csv_loader import collect_instance_csvs, parse_instance_metrics
 # ============================================================================
 
 def init_kvcm_logger(log_level: int = 4):
-    """初始化 KVCM 日志系统"""
+    """初始化 KVCM 日志系统。
+
+    Python analysis targets are usually run through `bazel run`, where users
+    expect progress and KVCM C++ logs to be visible in the terminal.  The C++
+    default logger writes to logs/kv_cache_manager.log, so analysis scripts
+    opt into console logging unless the caller explicitly sets
+    KVCM_LOG_TO_CONSOLE=0.
+    """
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(line_buffering=True)
+    if hasattr(sys.stderr, "reconfigure"):
+        sys.stderr.reconfigure(line_buffering=True)
+    os.environ.setdefault("KVCM_LOG_TO_CONSOLE", "1")
     kvcm_py_optimizer.LoggerBroker.InitLogger("", False)
     kvcm_py_optimizer.LoggerBroker.SetLogLevel(log_level)
 
@@ -77,8 +90,9 @@ def run_optimizer_with_config_explicit(
 
     # 设置容量 / 策略
     for group in config_json.get("instance_groups", []):
-        # NOTE: In tiered mode (hierarchical_eviction_enabled=true), eviction decisions
-        # are based on each tier's independent storages[i].capacity, not quota_capacity.
+        # NOTE: In tiered mode (tier_strategy.hierarchical_eviction_enabled=true),
+        # eviction decisions are based on each tier's independent storages[i].capacity,
+        # not quota_capacity.
         # This function only modifies quota_capacity, so capacity sweeps in tradeoff
         # analysis are ineffective for tiered configurations.
         # quota_capacity in config is GB; convert blocks -> GB for C++ FromRapidValue (bytes internally)
@@ -89,7 +103,7 @@ def run_optimizer_with_config_explicit(
         # not validated by C++, but expected to be consistent within a group).
         inst = group.get("instances", [{}])[0] if group.get("instances") else {}
         bpb = inst.get("bytes_per_token", 0) * inst.get("block_size", 0)
-        group["quota_capacity"] = capacity * bpb / (1024 ** 3) if bpb > 0 else capacity
+        group["quota_capacity"] = -1 if capacity < 0 else capacity * bpb / (1024 ** 3) if bpb > 0 else capacity
         if policy is not None:
             for instance in group.get("instances", []):
                 instance["eviction_policy_type"] = policy
@@ -126,6 +140,13 @@ def run_optimizer_with_config_explicit(
 # 配置工具
 # ============================================================================
 
+def group_hierarchical_eviction_enabled(group: dict) -> bool:
+    tier_strategy = group.get("tier_strategy", {})
+    if isinstance(tier_strategy, dict) and "hierarchical_eviction_enabled" in tier_strategy:
+        return bool(tier_strategy.get("hierarchical_eviction_enabled", False))
+    return bool(group.get("hierarchical_eviction_enabled", False))
+
+
 def extract_bytes_per_block_map(config_path: str) -> Dict[str, int]:
     """
     从 config JSON 提取每个 instance 的 bytes_per_block。
@@ -161,6 +182,23 @@ def extract_bytes_per_block_map(config_path: str) -> Dict[str, int]:
             else:
                 result[iid] = bs * bpt
     return result
+
+
+def has_hierarchical_storage(config_path: str) -> bool:
+    """
+    Return whether the optimizer config enables real multi-tier storage.
+
+    A single storage entry can still produce Tier0 diagnostic columns in CSV,
+    but per-tier comparison charts are only meaningful when a group has at
+    least two configured tiers and hierarchical eviction is enabled.
+    """
+    with open(config_path, "r") as f:
+        config_json = json.load(f)
+
+    for group in config_json.get("instance_groups", []):
+        if group_hierarchical_eviction_enabled(group) and len(group.get("storages", [])) > 1:
+            return True
+    return False
 
 
 def extract_config_quota_gb_map(config_path: str) -> Dict[str, float]:
@@ -206,6 +244,40 @@ def warmup_pass(
     Returns:
         max_blocks (int)
     """
+    return warmup_pass_with_metrics(
+        config_path,
+        warmup_capacity,
+        bytes_per_block_map,
+        policy,
+        enable_lifecycle_tracking,
+        enable_template_analysis,
+    )["max_blocks"]
+
+
+def warmup_pass_with_metrics(
+    config_path: str,
+    warmup_capacity: int,
+    bytes_per_block_map: Dict[str, int],
+    policy: str = None,
+    enable_lifecycle_tracking: bool = False,
+    enable_template_analysis: bool = False,
+) -> dict:
+    """
+    用大容量跑一遍，获取全量缓存容量和无限容量理论命中率。
+
+    Returns:
+        {
+            "max_blocks": int,
+            "instances": {
+                instance_id: {
+                    "total": float,
+                    "local": float,
+                    "remote": float,
+                    "cached_gb": float,
+                }
+            },
+        }
+    """
     import pandas as pd
 
     print(f"Running warmup with capacity={warmup_capacity}...")
@@ -220,17 +292,36 @@ def warmup_pass(
         if not csv_map:
             raise RuntimeError("No CSV files found after warmup")
 
-        first_csv = next(iter(csv_map.values()))
-        df = pd.read_csv(first_csv)
-        max_blocks = int(df["CachedBlocksAllInstance"].max())
+        max_blocks = 0
+        instance_metrics = {}
+        total_acc_write = 0
+        for iid, csv_file in csv_map.items():
+            df = pd.read_csv(csv_file)
+            if df.empty:
+                continue
+            if "CachedBlocksAllInstances" not in df.columns:
+                raise RuntimeError(f"{csv_file} missing required CachedBlocksAllInstances column")
+            max_blocks = max(max_blocks, int(df["CachedBlocksAllInstances"].max()))
+            total_acc_write = max(total_acc_write, int(df["AccWriteBlocks"].iloc[-1]) if "AccWriteBlocks" in df.columns else 0)
+            bpb = bytes_per_block_map.get(iid, 0)
+            metrics = parse_instance_metrics(csv_file, bpb)
+            if metrics is None:
+                continue
+            instance_metrics[iid] = {
+                "total": metrics["acc_total_hit_rate"],
+                "local": metrics["acc_local_hit_rate"],
+                "remote": metrics["acc_remote_hit_rate"],
+                "cached_gb": metrics["cached_gb"],
+            }
 
         rep_bpb = next(iter(bytes_per_block_map.values()), 0)
         max_gb = max_blocks * rep_bpb / (1024 ** 3) if rep_bpb > 0 else 0
-        acc_read = int(df["AccReadBlocks"].iloc[-1]) if "AccReadBlocks" in df.columns else 0
-        acc_write = int(df["AccWriteBlocks"].iloc[-1]) if "AccWriteBlocks" in df.columns else 0
-        print(f"Warmup done. Max cached: {max_gb:.2f} GB ({max_blocks} blocks), AccReadBlocks: {acc_read}, AccWriteBlocks: {acc_write}")
+        print(f"Warmup done. Max cached: {max_gb:.2f} GB ({max_blocks} blocks), AccWriteBlocks: {total_acc_write}")
 
-        return max_blocks
+        return {
+            "max_blocks": max_blocks,
+            "instances": instance_metrics,
+        }
     finally:
         if manager is not None:
             manager.ClearAllCachesAndResetStats()

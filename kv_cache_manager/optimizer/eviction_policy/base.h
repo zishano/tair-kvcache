@@ -1,4 +1,5 @@
 #pragma once
+#include <climits>
 #include <memory>
 #include <string>
 #include <vector>
@@ -38,15 +39,32 @@ protected:
         }
     }
 
-    // 读取 block 在"本策略所属 tier"上的最近访问时间
-    // 驱逐排序 / 尾部比较均基于此，实现各层 LRU 独立（不被跨层 block 级统计污染）
-    // 若 block 未注册到本层，回退到 block 级 last_access_time
+    // shared 模式本身就是全局池，使用 block 级访问/写入时间排序。
+    // 分层模式使用 tier 级时间，实现各层 LRU 独立；若 block 未注册到本层
+    // （不应发生，调用方已保证）返回 INT64_MAX。
     int64_t GetTierAccessTime(const BlockEntry *block) const {
         if (block == nullptr) {
             return INT64_MAX;
         }
         auto it = block->location_map.find(name_);
-        return (it != block->location_map.end()) ? it->second.last_access_time : INT64_MAX;
+        if (it == block->location_map.end()) {
+            return INT64_MAX;
+        }
+        if (it->second.last_access_time >= 0) {
+            return it->second.last_access_time;
+        }
+        if (it->second.writing_time >= 0) {
+            return it->second.writing_time;
+        }
+        if (name_ == "shared") {
+            if (block->last_access_time >= 0) {
+                return block->last_access_time;
+            }
+            if (block->writing_time >= 0) {
+                return block->writing_time;
+            }
+        }
+        return INT64_MAX;
     }
 
 private:

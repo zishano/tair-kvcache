@@ -54,14 +54,24 @@ def parse_instance_metrics(csv_file: str, bytes_per_block: int) -> Optional[dict
     df = pd.read_csv(csv_file)
     if df.empty:
         return None
+    required = [
+        "CachedBlocks",
+        "CachedBlocksAllInstances",
+        "AccHitRate",
+        "AccLocalHitRate",
+        "AccRemoteHitRate",
+    ]
+    missing = [col for col in required if col not in df.columns]
+    if missing:
+        raise ValueError(f"{csv_file} missing columns: {missing}")
     last = df.iloc[-1]
-    cached_blocks = int(last["CachedBlocksAllInstance"])
+    cached_blocks_all = int(last["CachedBlocksAllInstances"])
     result = {
         "acc_total_hit_rate": float(last["AccHitRate"]),
         "acc_local_hit_rate": float(last["AccLocalHitRate"]),
         "acc_remote_hit_rate": float(last["AccRemoteHitRate"]),
-        "cached_blocks_all": cached_blocks,
-        "cached_gb": cached_blocks * bytes_per_block / (1024 ** 3) if bytes_per_block > 0 else 0,
+        "cached_blocks_all": cached_blocks_all,
+        "cached_gb": cached_blocks_all * bytes_per_block / (1024 ** 3) if bytes_per_block > 0 else 0,
     }
     
     # 解析 per-tier 数据
@@ -95,7 +105,7 @@ def parse_instance_metrics(csv_file: str, bytes_per_block: int) -> Optional[dict
 
 def _read_hit_rates_from_csv(csv_path: str, bytes_per_block: int) -> Optional[dict]:
     """
-    读取单个 hit_rates CSV，兼容 Acc* 和非 Acc* 列名。
+    读取单个标准 hit_rates CSV。
 
     Args:
         csv_path:        hit_rates CSV 路径
@@ -111,20 +121,24 @@ def _read_hit_rates_from_csv(csv_path: str, bytes_per_block: int) -> Optional[di
             return None
         last = df.iloc[-1]
 
-        def _get(col_acc, col_fallback):
-            if col_acc in df.columns:
-                return float(last[col_acc])
-            if col_fallback in df.columns:
-                return float(last[col_fallback])
-            return 0.0
+        required = [
+            "CachedBlocks",
+            "CachedBlocksAllInstances",
+            "AccHitRate",
+            "AccLocalHitRate",
+            "AccRemoteHitRate",
+        ]
+        missing = [col for col in required if col not in df.columns]
+        if missing:
+            raise ValueError(f"missing columns: {missing}")
 
-        cached = int(last["CachedBlocksAllInstance"]) if "CachedBlocksAllInstance" in df.columns else 0
+        cached_all = int(last["CachedBlocksAllInstances"])
         return {
-            "total": _get("AccHitRate", "HitRate"),
-            "local": _get("AccLocalHitRate", "LocalHitRate"),
-            "remote": _get("AccRemoteHitRate", "RemoteHitRate"),
-            "cached_blocks_all": cached,
-            "cached_gb": cached * bytes_per_block / (1024 ** 3) if bytes_per_block > 0 else 0,
+            "total": float(last["AccHitRate"]),
+            "local": float(last["AccLocalHitRate"]),
+            "remote": float(last["AccRemoteHitRate"]),
+            "cached_blocks_all": cached_all,
+            "cached_gb": cached_all * bytes_per_block / (1024 ** 3) if bytes_per_block > 0 else 0,
         }
     except Exception as e:
         print(f"  Warning: Failed to read {csv_path}: {e}")
@@ -138,22 +152,25 @@ def _read_hit_rates_from_csv(csv_path: str, bytes_per_block: int) -> Optional[di
 def generate_capacity_list(
     max_blocks: int,
     num_points: int,
-    min_capacity: int = 2000,
+    min_capacity_ratio: float = 1e-4,
 ) -> List[int]:
     """
     指数分布采样容量列表，从小到大排序。
 
     Args:
-        max_blocks:   warmup 获取的最大 block 数
-        num_points:   采样点数
-        min_capacity: 最小容量阈值（小于此值的点丢弃）
+        max_blocks:          warmup 获取的最大 block 数
+        num_points:          采样点数
+        min_capacity_ratio:  最小容量相对阈值（小于 max_blocks * ratio 的点丢弃）
     """
+    if max_blocks <= 0 or num_points <= 0:
+        return []
+    min_capacity = max(1, int(max_blocks * min_capacity_ratio))
     x = np.linspace(-4, 4, num_points)
     ratios = np.exp(x) / np.exp(4)
     return sorted({
         int(max_blocks * r)
         for r in ratios
-        if int(max_blocks * r) > min_capacity
+        if int(max_blocks * r) >= min_capacity
     })
 
 
