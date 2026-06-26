@@ -62,7 +62,6 @@ void ProtoConvert::StorageConfigToProto(const StorageConfig &storage_config,
     } else if (type == DataStorageType::DATA_STORAGE_TYPE_VINEYARD) {
         const auto &vineyard_storage = *std::dynamic_pointer_cast<VineyardStorageSpec>(storage_config.storage_spec());
         auto *vineyard = proto_storage_config->mutable_vineyard();
-        vineyard->set_cluster_name(vineyard_storage.cluster_name());
         vineyard->set_heartbeat_timeout_ms(vineyard_storage.heartbeat_timeout_ms());
         vineyard->set_cleanup_grace_ms(vineyard_storage.cleanup_grace_ms());
         vineyard->set_liveness_check_interval_ms(vineyard_storage.liveness_check_interval_ms());
@@ -140,7 +139,6 @@ void ProtoConvert::StorageFromProto(const proto::admin::StorageConfig *proto_sto
     case proto::admin::StorageConfig::kVineyard: {
         VineyardStorageSpec spec;
         const auto &v = proto_storage_config->vineyard();
-        spec.set_cluster_name(v.cluster_name());
         if (v.heartbeat_timeout_ms() > 0)
             spec.set_heartbeat_timeout_ms(v.heartbeat_timeout_ms());
         if (v.cleanup_grace_ms() > 0)
@@ -297,6 +295,9 @@ void ProtoConvert::InstanceGroupToProto(const InstanceGroup &instance_group_info
     proto_instance_group->set_user_data(instance_group_info.user_data());
     proto_instance_group->set_version(instance_group_info.version());
     proto_instance_group->set_extra_info(instance_group_info.extra_info());
+    for (const auto &candidate : instance_group_info.event_reporting_storage_candidates()) {
+        proto_instance_group->add_event_reporting_storage_candidates(candidate);
+    }
 }
 void ProtoConvert::InstanceGroupFromProto(const proto::admin::InstanceGroup *proto_instance_group,
                                           InstanceGroup &instance_group_info) {
@@ -335,6 +336,10 @@ void ProtoConvert::InstanceGroupFromProto(const proto::admin::InstanceGroup *pro
     instance_group_info.set_user_data(proto_instance_group->user_data());
     instance_group_info.set_version(proto_instance_group->version());
     instance_group_info.set_extra_info(proto_instance_group->extra_info());
+    std::vector<std::string> event_reporting_storage_candidates(
+        proto_instance_group->event_reporting_storage_candidates().begin(),
+        proto_instance_group->event_reporting_storage_candidates().end());
+    instance_group_info.set_event_reporting_storage_candidates(event_reporting_storage_candidates);
 }
 
 void ProtoConvert::AccountFromProto(const proto::admin::Account *proto_account, Account &account_info) {
