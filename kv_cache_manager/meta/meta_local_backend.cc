@@ -394,6 +394,14 @@ ErrorCode MetaLocalBackend::GetForOneKey(KeyType key,
     }
     auto *item = static_cast<MetaMemCacheItem *>(cache_->Value(handle));
     int64_t stored_time = item->GetLastAccessTime();
+
+    // Record revisit interval before updating access time
+    if (revisit_histogram_ && stored_time > 0) {
+        int64_t now = TimestampUtil::GetCurrentTimeUs();
+        int64_t interval_us = now - stored_time;
+        revisit_histogram_->Observe(interval_us);
+    }
+
     item->TouchAccessTime();
     {
         std::shared_lock lock(item->GetMutex());

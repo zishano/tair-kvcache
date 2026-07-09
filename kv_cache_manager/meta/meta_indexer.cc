@@ -128,6 +128,12 @@ ErrorCode MetaIndexer::Init(const std::string &instance_id, const std::shared_pt
     return EC_OK;
 }
 
+void MetaIndexer::SetRevisitHistogram(std::shared_ptr<RevisitIntervalHistogram> histogram) {
+    if (backend_manager_) {
+        backend_manager_->SetRevisitHistogram(histogram);
+    }
+}
+
 MetaIndexer::Result MetaIndexer::Put(RequestContext *request_context,
                                      const KeyVector &keys,
                                      CacheLocationMapVector &location_maps,

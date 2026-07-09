@@ -49,8 +49,8 @@ cc_library(
         "metrics_reporter.h",
     ],
     deps = [
-        ":metrics_registry",
         ":metrics_lifecycle",
+        ":metrics_registry",
         ":metrics_collector",
         "//kv_cache_manager/common:utils",
         "//kv_cache_manager/common:logger",
@@ -66,6 +66,19 @@ cc_library(
     ],
     hdrs = [
         "prometheus_exporter.h",
+    ],
+    deps = [
+        ":metrics_registry",
+    ],
+)
+
+cc_library(
+    name = "revisit_interval_histogram",
+    srcs = [
+        "revisit_interval_histogram.cc",
+    ],
+    hdrs = [
+        "revisit_interval_histogram.h",
     ],
     deps = [
         ":metrics_registry",

@@ -18,6 +18,7 @@
 #include "kv_cache_manager/config/meta_cache_policy_config.h"
 #include "kv_cache_manager/meta/common.h"
 #include "kv_cache_manager/meta/meta_cache_base_backend.h"
+#include "kv_cache_manager/metrics/revisit_interval_histogram.h"
 
 namespace kv_cache_manager {
 
@@ -71,6 +72,11 @@ class MetaLocalBackend : public MetaCacheBaseBackend {
 public:
     MetaLocalBackend() = default;
     ~MetaLocalBackend() = default;
+
+    // Set histogram for revisit interval tracking (overrides base class no-op).
+    void SetRevisitHistogram(std::shared_ptr<RevisitIntervalHistogram> histogram) override {
+        revisit_histogram_ = std::move(histogram);
+    }
 
     std::string GetStorageType() noexcept override;
 
@@ -204,6 +210,7 @@ private:
     std::unique_ptr<std::atomic<int64_t>[]> shard_oldest_access_time_;
     uint32_t shard_mask_ = 0;
     size_t sample_times_ = 0;
+    std::shared_ptr<RevisitIntervalHistogram> revisit_histogram_;
 };
 
 } // namespace kv_cache_manager

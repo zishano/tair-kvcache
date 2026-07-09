@@ -17,6 +17,7 @@
 #include "kv_cache_manager/meta/meta_storage_backend_manager.h"
 #include "kv_cache_manager/meta/storage_usage_data.h"
 #include "kv_cache_manager/meta/types.h"
+#include "kv_cache_manager/metrics/revisit_interval_histogram.h"
 
 namespace kv_cache_manager {
 
@@ -55,6 +56,9 @@ public:
     ~MetaIndexer();
 
     ErrorCode Init(const std::string &instance_id, const std::shared_ptr<MetaIndexerConfig> &config) noexcept;
+
+    // Set revisit interval histogram for tracking cache access patterns.
+    void SetRevisitHistogram(std::shared_ptr<RevisitIntervalHistogram> histogram);
 
     // ---------- WRITE ----------
     Result Put(RequestContext *request_context,
