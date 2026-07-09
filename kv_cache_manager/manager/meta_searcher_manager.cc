@@ -61,7 +61,8 @@ MetaSearcher *MetaSearcherManager::TryCreateMetaSearcher(RequestContext *request
         if (meta_searcher != nullptr) {
             return meta_searcher;
         }
-        ec = meta_indexer_manager_->CreateMetaIndexer(instance_id, cache_config->meta_indexer_config(), group_boundaries);
+        ec = meta_indexer_manager_->CreateMetaIndexer(
+            instance_id, cache_config->meta_indexer_config(), group_boundaries);
         if (ec == ErrorCode::EC_OK) {
             if (auto pair = meta_searcher_map_.emplace(
                     instance_id,

@@ -35,41 +35,25 @@ TEST_F(StringUtilTest, ParseWithSpaces) {
     EXPECT_DOUBLE_EQ(result[2], 30.0);
 }
 
-TEST_F(StringUtilTest, ParseNonAscendingRejected) {
-    EXPECT_TRUE(StringUtil::ParseBucketBoundaries("5,1,30").empty());
-}
+TEST_F(StringUtilTest, ParseNonAscendingRejected) { EXPECT_TRUE(StringUtil::ParseBucketBoundaries("5,1,30").empty()); }
 
-TEST_F(StringUtilTest, ParseDuplicateRejected) {
-    EXPECT_TRUE(StringUtil::ParseBucketBoundaries("1,5,5,30").empty());
-}
+TEST_F(StringUtilTest, ParseDuplicateRejected) { EXPECT_TRUE(StringUtil::ParseBucketBoundaries("1,5,5,30").empty()); }
 
-TEST_F(StringUtilTest, ParseNegativeRejected) {
-    EXPECT_TRUE(StringUtil::ParseBucketBoundaries("-1,5,30").empty());
-}
+TEST_F(StringUtilTest, ParseNegativeRejected) { EXPECT_TRUE(StringUtil::ParseBucketBoundaries("-1,5,30").empty()); }
 
-TEST_F(StringUtilTest, ParseZeroRejected) {
-    EXPECT_TRUE(StringUtil::ParseBucketBoundaries("0,5,30").empty());
-}
+TEST_F(StringUtilTest, ParseZeroRejected) { EXPECT_TRUE(StringUtil::ParseBucketBoundaries("0,5,30").empty()); }
 
 TEST_F(StringUtilTest, ParseTrailingCharsRejected) {
     EXPECT_TRUE(StringUtil::ParseBucketBoundaries("1s,5,30").empty());
 }
 
-TEST_F(StringUtilTest, ParseEmptyTokenRejected) {
-    EXPECT_TRUE(StringUtil::ParseBucketBoundaries("1,,5").empty());
-}
+TEST_F(StringUtilTest, ParseEmptyTokenRejected) { EXPECT_TRUE(StringUtil::ParseBucketBoundaries("1,,5").empty()); }
 
-TEST_F(StringUtilTest, ParseLeadingCommaRejected) {
-    EXPECT_TRUE(StringUtil::ParseBucketBoundaries(",1,5").empty());
-}
+TEST_F(StringUtilTest, ParseLeadingCommaRejected) { EXPECT_TRUE(StringUtil::ParseBucketBoundaries(",1,5").empty()); }
 
-TEST_F(StringUtilTest, ParseTrailingCommaRejected) {
-    EXPECT_TRUE(StringUtil::ParseBucketBoundaries("1,5,").empty());
-}
+TEST_F(StringUtilTest, ParseTrailingCommaRejected) { EXPECT_TRUE(StringUtil::ParseBucketBoundaries("1,5,").empty()); }
 
-TEST_F(StringUtilTest, ParseNonNumericRejected) {
-    EXPECT_TRUE(StringUtil::ParseBucketBoundaries("abc,5,30").empty());
-}
+TEST_F(StringUtilTest, ParseNonNumericRejected) { EXPECT_TRUE(StringUtil::ParseBucketBoundaries("abc,5,30").empty()); }
 
 TEST_F(StringUtilTest, ParseFractionalBoundaries) {
     auto result = StringUtil::ParseBucketBoundaries("0.5,1.5,5.0");

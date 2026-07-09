@@ -71,8 +71,8 @@ private:
     int64_t version_;
     std::string extra_info_;
     std::vector<std::string> event_reporting_storage_candidates_;
-    std::string revisit_interval_buckets_str_;               // raw string for JSON wire format
-    std::vector<double> parsed_revisit_interval_buckets_;     // parsed, validated boundaries
+    std::string revisit_interval_buckets_str_;            // raw string for JSON wire format
+    std::vector<double> parsed_revisit_interval_buckets_; // parsed, validated boundaries
 };
 
 } // namespace kv_cache_manager

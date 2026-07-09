@@ -264,8 +264,7 @@ std::size_t MetricsData::RemoveByTagFilter(const MetricsTags &filter) {
 std::optional<Gauge> MetricsData::GetGauge(const MetricsTags &tags) {
     std::lock_guard<std::mutex> guard(mutex_);
     auto it = metrics_data_.find(tags);
-    if (it == metrics_data_.end() || it->second == nullptr ||
-        !std::holds_alternative<GaugeValue>(it->second->value)) {
+    if (it == metrics_data_.end() || it->second == nullptr || !std::holds_alternative<GaugeValue>(it->second->value)) {
         return std::nullopt;
     }
     return Gauge{it->second};

@@ -29,9 +29,9 @@ TEST_F(InstanceGroupTest, SetValidBuckets) {
 TEST_F(InstanceGroupTest, SetInvalidBucketsClearsParsed) {
     InstanceGroup group;
     group.set_name("test");
-    group.set_revisit_interval_buckets("5,1,30");  // not ascending
+    group.set_revisit_interval_buckets("5,1,30"); // not ascending
     EXPECT_TRUE(group.revisit_interval_buckets().empty());
-    EXPECT_EQ(group.revisit_interval_buckets_raw(), "5,1,30");  // raw preserved
+    EXPECT_EQ(group.revisit_interval_buckets_raw(), "5,1,30"); // raw preserved
 }
 
 TEST_F(InstanceGroupTest, SetEmptyBuckets) {
@@ -58,8 +58,7 @@ static std::pair<bool, std::string> ValidateBucketsOnly(const std::string &bucke
     auto reclaim = std::make_shared<CacheReclaimStrategy>();
     reclaim->set_storage_unique_name("local");
     auto meta_config = std::make_shared<MetaIndexerConfig>();
-    auto cache_config = std::make_shared<CacheConfig>(
-        CachePreferStrategy::CPS_PREFER_3FS, reclaim, meta_config);
+    auto cache_config = std::make_shared<CacheConfig>(CachePreferStrategy::CPS_PREFER_3FS, reclaim, meta_config);
     group.set_cache_config(cache_config);
     group.set_revisit_interval_buckets(buckets_str);
 
@@ -69,7 +68,7 @@ static std::pair<bool, std::string> ValidateBucketsOnly(const std::string &bucke
 }
 
 TEST_F(InstanceGroupTest, ValidateRejectsInvalidBuckets) {
-    auto [valid, invalid_fields] = ValidateBucketsOnly("5,1,30");  // invalid: not ascending
+    auto [valid, invalid_fields] = ValidateBucketsOnly("5,1,30"); // invalid: not ascending
     EXPECT_FALSE(valid);
     EXPECT_NE(invalid_fields.find("revisit_interval_buckets"), std::string::npos);
 }

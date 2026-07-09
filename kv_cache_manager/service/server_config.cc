@@ -306,7 +306,7 @@ bool ServerConfig::Check() {
     if (!revisit_interval_buckets_.empty()) {
         auto boundaries = ParseRevisitIntervalBuckets(revisit_interval_buckets_);
         if (boundaries.empty()) {
-            return false;  // ParseRevisitIntervalBuckets already printed the error
+            return false; // ParseRevisitIntervalBuckets already printed the error
         }
     }
 

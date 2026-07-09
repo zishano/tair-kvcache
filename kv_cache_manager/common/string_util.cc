@@ -20,21 +20,19 @@ std::vector<double> StringUtil::ParseBucketBoundaries(const std::string &buckets
     while (std::getline(iss, token, ',')) {
         Trim(token);
         if (token.empty()) {
-            return {};  // reject empty tokens (e.g. "1,,5")
+            return {}; // reject empty tokens (e.g. "1,,5")
         }
         try {
             size_t pos = 0;
             double val = std::stod(token, &pos);
             if (pos != token.size()) {
-                return {};  // reject partial consumption (e.g. "1s")
+                return {}; // reject partial consumption (e.g. "1s")
             }
             if (val <= 0.0 || !std::isfinite(val)) {
                 return {};
             }
             boundaries.push_back(val);
-        } catch (const std::exception &) {
-            return {};
-        }
+        } catch (const std::exception &) { return {}; }
     }
 
     // Check strictly ascending order

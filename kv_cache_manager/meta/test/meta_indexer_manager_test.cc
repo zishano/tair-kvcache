@@ -244,8 +244,7 @@ TEST_F(MetaIndexerManagerTest, TestCreateWithPerInstanceBoundaries) {
     auto backend_config = std::make_shared<MetaStorageBackendConfig>();
     backend_config->storage_type_ = META_LOCAL_BACKEND_TYPE_STR;
     meta_indexer_config->meta_storage_backend_config_ = backend_config;
-    ASSERT_EQ(ErrorCode::EC_OK,
-              manager_->CreateMetaIndexer("inst_custom", meta_indexer_config, custom_boundaries));
+    ASSERT_EQ(ErrorCode::EC_OK, manager_->CreateMetaIndexer("inst_custom", meta_indexer_config, custom_boundaries));
 
     auto indexer = manager_->GetMetaIndexer("inst_custom");
     ASSERT_NE(indexer, nullptr);
@@ -256,9 +255,9 @@ TEST_F(MetaIndexerManagerTest, TestCreateWithPerInstanceBoundaries) {
     ASSERT_NE(backend->revisit_histogram_, nullptr);
     EXPECT_EQ(backend->revisit_histogram_->GetBoundaries().size(), 4);
     EXPECT_DOUBLE_EQ(backend->revisit_histogram_->GetBoundaries()[0], 1.0);
-    EXPECT_DOUBLE_EQ(backend->revisit_histogram_->GetBoundaries()[1], 10.0);  // NOT 5.0 (default)
+    EXPECT_DOUBLE_EQ(backend->revisit_histogram_->GetBoundaries()[1], 10.0); // NOT 5.0 (default)
     EXPECT_DOUBLE_EQ(backend->revisit_histogram_->GetBoundaries()[2], 60.0);
-    EXPECT_DOUBLE_EQ(backend->revisit_histogram_->GetBoundaries()[3], 300.0);  // NOT 60.0 (default)
+    EXPECT_DOUBLE_EQ(backend->revisit_histogram_->GetBoundaries()[3], 300.0); // NOT 60.0 (default)
 }
 
 TEST_F(MetaIndexerManagerTest, TestCreateWithEmptyBoundariesUsesDefault) {
@@ -273,8 +272,7 @@ TEST_F(MetaIndexerManagerTest, TestCreateWithEmptyBoundariesUsesDefault) {
     backend_config->storage_type_ = META_LOCAL_BACKEND_TYPE_STR;
     meta_indexer_config->meta_storage_backend_config_ = backend_config;
     std::vector<double> empty_boundaries;
-    ASSERT_EQ(ErrorCode::EC_OK,
-              manager_->CreateMetaIndexer("inst_fallback", meta_indexer_config, empty_boundaries));
+    ASSERT_EQ(ErrorCode::EC_OK, manager_->CreateMetaIndexer("inst_fallback", meta_indexer_config, empty_boundaries));
 
     auto indexer = manager_->GetMetaIndexer("inst_fallback");
     ASSERT_NE(indexer, nullptr);
@@ -284,7 +282,7 @@ TEST_F(MetaIndexerManagerTest, TestCreateWithEmptyBoundariesUsesDefault) {
     ASSERT_NE(backend, nullptr);
     ASSERT_NE(backend->revisit_histogram_, nullptr);
     EXPECT_EQ(backend->revisit_histogram_->GetBoundaries().size(), 4);
-    EXPECT_DOUBLE_EQ(backend->revisit_histogram_->GetBoundaries()[1], 5.0);  // default, not custom
+    EXPECT_DOUBLE_EQ(backend->revisit_histogram_->GetBoundaries()[1], 5.0); // default, not custom
 }
 
 TEST_F(MetaIndexerManagerTest, TestExistingInstanceUnaffectedByConfigChange) {
@@ -314,7 +312,7 @@ TEST_F(MetaIndexerManagerTest, TestExistingInstanceUnaffectedByConfigChange) {
     ASSERT_NE(backend_after, nullptr);
     ASSERT_NE(backend_after->revisit_histogram_, nullptr);
     EXPECT_EQ(backend_after->revisit_histogram_->GetBoundaries().size(), 3);
-    EXPECT_DOUBLE_EQ(backend_after->revisit_histogram_->GetBoundaries()[1], 5.0);  // still 5.0, NOT 10.0
+    EXPECT_DOUBLE_EQ(backend_after->revisit_histogram_->GetBoundaries()[1], 5.0); // still 5.0, NOT 10.0
 }
 
 } // namespace kv_cache_manager
