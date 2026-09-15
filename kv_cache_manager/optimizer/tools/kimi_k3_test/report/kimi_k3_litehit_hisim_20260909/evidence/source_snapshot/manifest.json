@@ -1,0 +1,70 @@
+[
+  {
+    "path": "docs/design/module_architecture.md",
+    "sha256": "cd85b89806bfd963e8dc6395d85a6394405a5decb7bba8a7a48974ed846f5b03"
+  },
+  {
+    "path": "hisim/src/hisim/simulation/bench_serving.py",
+    "sha256": "debd634d185b27ceb550fb9e71ee671d25bb0fe610bb2ab09f46717bf4eb5e92"
+  },
+  {
+    "path": "hisim/src/hisim/simulation/hybrid_checkpoint.py",
+    "sha256": "aadd5c40689c67577bfaa1b8083d3da23a5f2f833fb10547c078b95f547a4c32"
+  },
+  {
+    "path": "hisim/src/hisim/time_predictor/kimi_k3.py",
+    "sha256": "efcc5733b8e26782c4eea38c839c0981f545a38567c7ecee30cf2fb465cdbc31"
+  },
+  {
+    "path": "hisim/test/test_hybrid_checkpoint.py",
+    "sha256": "afd53341d02b7687438a047ca239c9e105bb7e4a2d37163e8dddd1fcc60d2621"
+  },
+  {
+    "path": "hisim/test/test_kimi_k3_predictor.py",
+    "sha256": "1249d790a2bda8670d939ebcd45709951ac49c98e35bd3bad9f101472f7d6465"
+  },
+  {
+    "path": "kv_cache_manager/optimizer/config/optimizer_lite_hit_config.cc",
+    "sha256": "7236ab8c26dce4ff379820257999eb219e6df997bdfd9ae51d45404d6f7b70e2"
+  },
+  {
+    "path": "kv_cache_manager/optimizer/config/optimizer_lite_hit_config.h",
+    "sha256": "67f1b73e579e60564ee2fca4dd9178fce24d30fe8e47fb5d435fbc3633194c87"
+  },
+  {
+    "path": "kv_cache_manager/optimizer/liteHit/README.md",
+    "sha256": "c57b4cc4ca06bfadf52c2e7958732ba6fdae600cf00e3c08a565f7fe7d42124b"
+  },
+  {
+    "path": "kv_cache_manager/optimizer/liteHit/README_zh.md",
+    "sha256": "c784616fd23a0b2549f6e4733288e6117cea71e98703f66431498ac805f5f189"
+  },
+  {
+    "path": "kv_cache_manager/optimizer/liteHit/facts_csv.h",
+    "sha256": "8c671d7a70eeab3743089b937cc009f728dab8db7e3c5555647aecc16afa2d5e"
+  },
+  {
+    "path": "kv_cache_manager/optimizer/lite_hit_main.cc",
+    "sha256": "c4afbea4a8dc88e0aeaa0b573e3dbda70ee2e53f9089d670feca5ff86c663d3e"
+  },
+  {
+    "path": "kv_cache_manager/optimizer/manager/lite_hit_offline_runner.cc",
+    "sha256": "f15210a158eae494ee7be3af14344beaf1ba6ee4996367fdafdc8bf25b518437"
+  },
+  {
+    "path": "kv_cache_manager/optimizer/test/lite_hit_offline_runner_test.cc",
+    "sha256": "d3916e9b0ae7ea0feb7702261287c6c34535621466bc475b8d0139ede8e810b4"
+  },
+  {
+    "path": "kv_cache_manager/optimizer/tools/kimi_k3_capacity/SOP.md",
+    "sha256": "aaa2e9a41ec0a89f7394077adff90ea3d1a55752e8397c311ef46d8211239910"
+  },
+  {
+    "path": "kv_cache_manager/optimizer/tools/kimi_k3_capacity/analyze_results.py",
+    "sha256": "6d9d49ab68b1416f17fddcb8962bbf0373e3b2cd1ef47aa609a91a76a85fafe6"
+  },
+  {
+    "path": "kv_cache_manager/optimizer/tools/kimi_k3_capacity/run_workflow.py",
+    "sha256": "6ca82f0232d72e9c4079c7d33bc9034e5874f93a1de1eb8a718669342d35a576"
+  }
+]

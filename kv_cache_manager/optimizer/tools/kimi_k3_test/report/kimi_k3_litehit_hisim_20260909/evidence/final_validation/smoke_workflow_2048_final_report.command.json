@@ -1,0 +1,14 @@
+{
+  "command": [
+    "/workspace/tair-kvcache/.venv/bin/python",
+    "kv_cache_manager/optimizer/tools/kimi_k3_capacity/run_workflow.py",
+    "--steps",
+    "plot",
+    "--output-dir",
+    "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/smoke_workflow_2048"
+  ],
+  "cwd": "/workspace/tair-kvcache",
+  "returncode": 0,
+  "elapsed_wall_s": 3.2329658465459943,
+  "stdout_stderr": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/evidence/final_validation/smoke_workflow_2048_final_report.log"
+}

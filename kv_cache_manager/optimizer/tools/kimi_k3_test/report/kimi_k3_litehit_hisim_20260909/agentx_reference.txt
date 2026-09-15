@@ -1,0 +1,120 @@
+AgentX Methodology and Datasets | InferenceX by SemiAnalysis
+InferenceX
+by
+Home
+AgentX
+NEW
+Overview
+Dashboard
+Comparisons
+Articles
+About
+Star
+1,644
+中文
+AgentX v1.0 methodology
+AgentX Benchmark Datasets
+AgentX derives replay workloads from opt-in Claude Code sessions. The published traces remove prompt, code, and tool payloads while retaining request lengths, prefix reuse, subagent branches, and timing.
+View AgentX Performance Results
+→
+AgentX industry impact
+Optimizations for Agentic Workloads
+The most useful thing AgentX produced in its first months was not the open-source datasets. It was 50+ upstream pull requests from AgentX partners, optimizing real-world agentic workloads with AgentX as the north star.
+Read the optimizations
+→
+vLLM
+SGLang
+TensorRT-LLM
+AMD ATOM
+ROCm AITER
+NVIDIA Dynamo
+LMCache
+Mooncake
+AgentX tutorial
+Exploring Agentic Workloads: Detailed Telemetry
+Every point on an AgentX curve opens into the run behind it: eleven per-point telemetry charts, a per-request timeline, and a per-conversation flamegraph. The tutorial walks through all of them.
+Read the telemetry tutorial
+→
+How an AgentX run is built
+01
+Capture
+An opt-in HTTP proxy records request and response timing, token counts, conversation IDs, and subagent IDs as sessions run.
+02
+Transform
+Original prompts, source code, tool arguments, and tool results are removed. Inputs become session-scoped chained hashes in 64-token blocks, preserving matching prefixes without revealing content.
+03
+Reconstruct
+AIPerf fills those blocks with deterministic synthetic coding and tool-use tokens, then rebuilds each session as a directed acyclic graph (DAG) of main-agent turns, parallel subagents, auxiliary requests, and inter-turn tool time.
+04
+Replay and measure
+A seeded warmup establishes cache state before each configuration is profiled for one hour across a sweep of concurrent clients. Per-replay cache-bust markers stop unrelated sessions from sharing prefixes.
+What is in the v1.0 dataset
+AgentX v1.0 uses 393 Claude Code sessions selected from an internal, opt-in trace corpus. Eligible sessions contain at least 20 requests, use Claude Code 2.1.139 or newer, and have no more than 10 concurrent subagents. Processing removes duplicate requests, client-specific security-monitor and title-generation calls, and reconstructed inputs above 990k tokens.
+v1.0 trace profile
+sessions
+393
+median input tokens / request
+142k
+median output tokens / request
+444
+sessions with subagents
+44%
+full
+:
+The complete AgentX v1.0 replay set, including contexts up to 1M tokens.
+256k
+:
+A context-limited variant for models and inference engines configured with a maximum context of 256k tokens.
+Replay controls
+Steady-state start
+A fixed seed selects a point 25–75% through each conversation. Primer requests and 10 additional warmup requests per replay lane materialize KV cache before profiling begins.
+Deterministic replay
+The seed fixes conversation sampling, starting points, and synthetic content. Reported metrics cover only the one-hour profiling window, not warmup.
+Speculative decoding
+Because synthetic tokens can distort draft-token acceptance, AgentX forces an acceptance length measured with SPEED-Bench for each model, speculator, draft length, and thinking-mode combination.
+DRAM offload
+Servers without standardized DRAM are capped at 3 TB. Standard GB200 NVL72, GB300 NVL72, and TPUv7 systems use installed capacity, and every configuration may access only the share proportional to its GPU allocation.
+How to read AgentX results
+Concurrency means concurrent agent clients, not a fixed request batch. AgentX is closed loop, so faster configurations complete more requests and can encounter a slightly different workload mix. This variation is most visible at low concurrency. Report throughput with time to first token (TTFT) and interactivity; a single latency statistic does not describe the full run.
+AgentX measures serving-system performance. Its synthetic payloads do not support model-quality evaluation.
+The client cannot observe provider-side chat templates, proprietary tokenizers, server tools, encrypted reasoning content, or the exact token expansion of images and documents. AgentX uses deterministic placeholders and model-specific padding for those inputs. The resulting traces reproduce request lengths, timing, conversation topology, and KV-reuse patterns. They do not contain the original conversations.
+Read the full methodology
+→
+Datasets
+Loading datasets…
+Continuous open-source agentic inference benchmarking. Real-world, reproducible, auditable performance data trusted by trillion dollar AI infrastructure operators like OpenAI, Meta, Oracle, Microsoft, etc.
+SemiAnalysis
+Main Site
+Newsletter
+About
+Legal
+Land Acknowledgement
+Privacy Policy
+Cookie Policy
+Contribute
+Benchmarks
+AgentX Harness
+Visualization
+More
+Supporters
+AgentX
+Telemetry
+Articles
+API Reference
+TCO Calculator
+Fleet Lifecycle
+Chip Reliability
+Chip Specs Dashboard
+Performance per Dollar
+Model Architectures
+AI Inference Glossary
+Chip Specs & Pricing
+GPU Rankings
+Model on GPU Results
+Star
+1,644
+If this data helps your work, consider starring us on GitHub or sharing with your network.
+©
+2026
+semianalysis.com.
+All rights reserved.

@@ -1,0 +1,16 @@
+{
+  "command": [
+    "bazel",
+    "test",
+    "//kv_cache_manager/optimizer/test:LiteHitTest",
+    "//kv_cache_manager/optimizer/test:LiteHitTtlTest",
+    "//kv_cache_manager/optimizer/test:LiteHitOfflineRunnerTest",
+    "--jobs=4",
+    "--test_output=errors",
+    "--noshow_progress"
+  ],
+  "cwd": "/workspace/tair-kvcache",
+  "returncode": 0,
+  "elapsed_wall_s": 36.43799849785864,
+  "log": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/litehit_bazel_test.log"
+}

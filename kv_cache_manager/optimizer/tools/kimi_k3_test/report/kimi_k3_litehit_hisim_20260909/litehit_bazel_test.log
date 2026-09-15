@@ -1,0 +1,11 @@
+Starting local Bazel server and connecting to it...
+INFO: Analyzed 3 targets (63 packages loaded, 642 targets configured).
+INFO: Found 3 test targets...
+INFO: Elapsed time: 36.309s, Critical Path: 9.10s
+INFO: 242 processes: 92 internal, 150 local.
+//kv_cache_manager/optimizer/test:LiteHitOfflineRunnerTest               PASSED in 0.1s
+//kv_cache_manager/optimizer/test:LiteHitTest                            PASSED in 0.1s
+//kv_cache_manager/optimizer/test:LiteHitTtlTest                         PASSED in 0.1s
+
+Executed 3 out of 3 tests: 3 tests pass.
+There were tests whose specified size is too big. Use the --test_verbose_timeout_warnings command line option to see which ones these are.

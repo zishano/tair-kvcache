@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/workspace/tair-kvcache/.venv/bin/python",
+    "-m",
+    "hisim.simulation.bench_serving",
+    "--hybrid-checkpoint-config",
+    "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/agentx_sample/stage2/configs/elbow_concurrency_8.json"
+  ],
+  "cwd": "/workspace/tair-kvcache",
+  "returncode": 0,
+  "elapsed_wall_s": 19.377927230671048,
+  "stdout_stderr": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/agentx_sample/stage2/elbow_concurrency_8/bench_serving.log"
+}

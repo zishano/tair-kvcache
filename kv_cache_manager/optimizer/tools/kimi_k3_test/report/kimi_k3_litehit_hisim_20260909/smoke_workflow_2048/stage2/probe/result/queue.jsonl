@@ -1,0 +1,16 @@
+{"time_s": 0.0, "active": 0, "queued": 1, "outstanding": 1, "g1_occupied_bytes": 0}
+{"time_s": 0.0, "active": 1, "queued": 0, "outstanding": 1, "g1_occupied_bytes": 22569467904}
+{"time_s": 3.215778182007705, "active": 0, "queued": 0, "outstanding": 0, "g1_occupied_bytes": 22569467904}
+{"time_s": 3.268625727984689, "active": 0, "queued": 0, "outstanding": 0, "g1_occupied_bytes": 0}
+{"time_s": 10.0, "active": 0, "queued": 1, "outstanding": 1, "g1_occupied_bytes": 0}
+{"time_s": 10.0, "active": 1, "queued": 0, "outstanding": 1, "g1_occupied_bytes": 22569467904}
+{"time_s": 10.984722418137192, "active": 1, "queued": 0, "outstanding": 1, "g1_occupied_bytes": 11784536064}
+{"time_s": 11.063185096693289, "active": 0, "queued": 0, "outstanding": 0, "g1_occupied_bytes": 0}
+{"time_s": 20.0, "active": 0, "queued": 1, "outstanding": 1, "g1_occupied_bytes": 0}
+{"time_s": 20.0, "active": 1, "queued": 0, "outstanding": 1, "g1_occupied_bytes": 22569467904}
+{"time_s": 22.7998924659791, "active": 0, "queued": 0, "outstanding": 0, "g1_occupied_bytes": 22569467904}
+{"time_s": 22.826477967049467, "active": 0, "queued": 0, "outstanding": 0, "g1_occupied_bytes": 0}
+{"time_s": 30.0, "active": 0, "queued": 1, "outstanding": 1, "g1_occupied_bytes": 0}
+{"time_s": 30.0, "active": 1, "queued": 0, "outstanding": 1, "g1_occupied_bytes": 22569467904}
+{"time_s": 32.7998924659791, "active": 0, "queued": 0, "outstanding": 0, "g1_occupied_bytes": 22569467904}
+{"time_s": 32.82647796704946, "active": 0, "queued": 0, "outstanding": 0, "g1_occupied_bytes": 0}

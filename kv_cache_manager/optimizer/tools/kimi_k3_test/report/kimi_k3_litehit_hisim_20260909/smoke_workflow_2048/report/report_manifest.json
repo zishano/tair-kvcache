@@ -1,0 +1,51 @@
+{
+  "files": [
+    {
+      "path": "REPORT.md",
+      "sha256": "9f6575ab60642d8688f57d7f1ccb2a52874afb4e020bce17df55908b834f829e"
+    },
+    {
+      "path": "capacity_curve.pdf",
+      "sha256": "02e4c5092a818c882fa8023cef70bf70d4c18f5f5116f014804e4f690ccbf598"
+    },
+    {
+      "path": "capacity_curve.png",
+      "sha256": "eb8329705e6b096c72b9eed3f260baa46102c433c6f127c84611d0fc48a24db5"
+    },
+    {
+      "path": "capacity_curve.svg",
+      "sha256": "f06e57b499ab3e1e9fa4c28b263e0b44c626352dc07f0e54ab4dd7290d2b8c41"
+    },
+    {
+      "path": "index.html",
+      "sha256": "f9027cc15080c8c7fc8bf05e7f7b8ff573702fa1ebb7d0ac36441bf0ca220e11"
+    },
+    {
+      "path": "resources.pdf",
+      "sha256": "906936041794037639d4aa4d93c119d51837f9f54d388ee54c08dc4f643897ed"
+    },
+    {
+      "path": "resources.png",
+      "sha256": "765f4b8ebde31d9da86e71f4827b3374ebf9f0a44bbf970af13b65420e4c8912"
+    },
+    {
+      "path": "resources.svg",
+      "sha256": "0ce2fba9a15ac428cc5787b6dc0ebaf67a483fbd7f2734b01c2917be737f12e4"
+    },
+    {
+      "path": "serving_metrics.pdf",
+      "sha256": "ad888d25528e77033eb6f364ff195ba74577513be771852e562a990e1994dfdd"
+    },
+    {
+      "path": "serving_metrics.png",
+      "sha256": "591fd4ee0b6657362ebe510f30afdbcd25ce567e4e69ef8fd9d488fa2b3cd9e8"
+    },
+    {
+      "path": "serving_metrics.svg",
+      "sha256": "52915053b8cba77a4dd5f41b4825ecc23058b94dbc6a734967a9070f4ea64be0"
+    }
+  ],
+  "stage2_all_validated": true,
+  "official_agentx_benchmark": false,
+  "gpu_measured": false
+}

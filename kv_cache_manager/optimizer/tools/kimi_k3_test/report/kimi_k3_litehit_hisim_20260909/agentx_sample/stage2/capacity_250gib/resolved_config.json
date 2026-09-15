@@ -1,0 +1,114 @@
+{
+  "schema": "hisim.hybrid_checkpoint.v1",
+  "layout_path": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/agentx_sample/layout.json",
+  "trace_path": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/agentx_sample/trace.jsonl",
+  "arrival_scale": 1.0,
+  "predictor": {
+    "max_batch_size": 32,
+    "max_num_tokens": 8192,
+    "memory_fraction": 0.9
+  },
+  "scheduler": {
+    "max_concurrency": 32,
+    "max_prefill_tokens": 8192,
+    "chunked_prefill_tokens": 1024,
+    "g1_page_tokens": 64,
+    "active_kda_buffers": 2,
+    "g1_capacity_bytes": 507506851840
+  },
+  "storage": {
+    "capacity_bytes": 268435456000,
+    "read_bandwidth_bytes_per_s": 68719476736,
+    "write_bandwidth_bytes_per_s": 34359738368,
+    "h2d_bandwidth_bytes_per_s": 137438953472,
+    "d2h_bandwidth_bytes_per_s": 137438953472
+  },
+  "bandwidth_provenance": "Scenario assumptions, aggregate across all eight attention TP ranks; not measured hardware bandwidth",
+  "workload_provenance": {
+    "kind": "agentx_observed_arrival_subset",
+    "path": "/workspace/dynosim_aic_sweep/traces.jsonl",
+    "sha256": "29b6a19e751ff5230771519aab755f80a0f43a4ba9cf96b72d3a6a437ec99276",
+    "source_bytes": 1847151435,
+    "methodology_url": "https://inferencex.semianalysis.com/agentx",
+    "sessions": [
+      {
+        "session_id": "002001296e8a8c38ad9d7cc436d691afc602",
+        "source_line_1based": 1,
+        "available_leaf_requests": 198,
+        "selected_requests": 17
+      },
+      {
+        "session_id": "006c98de37d819e95b0840e25426bb7ca99d",
+        "source_line_1based": 2,
+        "available_leaf_requests": 33,
+        "selected_requests": 5
+      },
+      {
+        "session_id": "00ca01c4aaeccee751ae6285beb54dea262f",
+        "source_line_1based": 3,
+        "available_leaf_requests": 35,
+        "selected_requests": 24
+      },
+      {
+        "session_id": "0196085d85d2075a50b74cd8795ffbdcea9a",
+        "source_line_1based": 4,
+        "available_leaf_requests": 233,
+        "selected_requests": 24
+      },
+      {
+        "session_id": "02bc0afb13f7a2d9efa86c28511261d85c0e",
+        "source_line_1based": 5,
+        "available_leaf_requests": 466,
+        "selected_requests": 24
+      },
+      {
+        "session_id": "03e110ac6921c2fe9ac7772a9654314a2beb",
+        "source_line_1based": 6,
+        "available_leaf_requests": 107,
+        "selected_requests": 24
+      },
+      {
+        "session_id": "0470d446a4514dfe0c6ad0be92853bd13287",
+        "source_line_1based": 7,
+        "available_leaf_requests": 795,
+        "selected_requests": 24
+      },
+      {
+        "session_id": "04dba6fe621301a1d01fd63b8d02c9645c48",
+        "source_line_1based": 8,
+        "available_leaf_requests": 25,
+        "selected_requests": 21
+      }
+    ],
+    "leaf_requests_examined": 1892,
+    "filtered_requests": {
+      "outside_source_time_window": 780,
+      "above_context_limit": 644,
+      "nonpositive_input_or_output": 2,
+      "beyond_per_session_sample": 303
+    },
+    "selected_subagent_requests": 75,
+    "prefix_parent_checks": 163646,
+    "hash_globalization": "(source_session_line_1based << 32) | local_prefix_hash_id; children share session namespace",
+    "keys_are_prefix_chained": true,
+    "model_mapping": "all selected source-model requests -> moonshotai/Kimi-K3",
+    "arrival_policy": "all selected sessions start together; observed session-relative timestamps / time_scale; fixed across capacities",
+    "time_scale": 10.0,
+    "source_time_window_s": 3600.0,
+    "max_input_tokens": 262144,
+    "preserved_exactly": [
+      "input_len",
+      "output_len",
+      "within_session_prefix_identity",
+      "nested_stream_identity"
+    ],
+    "not_preserved": [
+      "closed_loop_completion_dependent_arrivals",
+      "original_model_latency",
+      "original_model_tokenizer"
+    ],
+    "official_agentx_benchmark": false,
+    "note": "No original payloads. No 25-75% random start, primer, one-hour profiling, forced speculative acceptance, or model quality claim"
+  },
+  "output_dir": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/agentx_sample/stage2/capacity_250gib"
+}

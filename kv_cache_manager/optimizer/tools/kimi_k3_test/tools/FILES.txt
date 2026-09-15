@@ -1,0 +1,279 @@
+Kimi-K3 容量曲线测试工具 - 文件清单
+================================================================================
+创建时间: 2024-09-14
+目标: 从 run_workflow.py 和 analyze_results.py 提取只绘制 axes[0] 图表的代码
+位置: /mnt/nvme1n1/data/lmk/Github/tair-kvcache/kv_cache_manager/optimizer/tools/kimi_k3_test/
+
+================================================================================
+核心文件（必需）
+================================================================================
+
+1. compute_capacity_data.py (7.7K)
+   - 功能: 计算容量曲线数据
+   - 来源: run_workflow.py scan() 函数（第 330-407 行）
+   - 输入: trace.jsonl, layout.json, litehit_config.json
+   - 输出: capacity_data.json, capacity_curve.csv
+   - 依赖: lite_hit_main, lite_hit_facts_query_main
+
+2. plot_capacity_curve_axes0.py (5.4K)
+   - 功能: 绘制 axes[0] 容量曲线图
+   - 来源: analyze_results.py plot_and_report() 函数（第 380-395 行）
+   - 输入: capacity_data.json, trace_manifest.json, layout.json
+   - 输出: capacity_curve_axes0.{png,svg,pdf}
+   - 依赖: matplotlib, numpy
+
+3. run_example.sh (3.3K)
+   - 功能: 一键运行示例脚本
+   - 智能检测: 自动识别 stage1 数据或 litehit_config
+   - 使用: ./run_example.sh <input_dir> [output_dir]
+   - 权限: 可执行 (chmod +x)
+
+================================================================================
+文档文件（推荐阅读）
+================================================================================
+
+4. INDEX.md (6.6K) ⭐ 首先阅读
+   - 文件索引和导航
+   - 快速使用指南
+   - 文件阅读顺序
+   - 输出说明
+
+5. QUICKSTART.md (5.5K) ⭐ 最实用
+   - 快速开始指南
+   - 3 种使用方法
+   - 常见问题解答
+   - 示例命令
+
+6. README.md (7.5K)
+   - 完整技术文档
+   - 功能详细说明
+   - 数据格式说明
+   - 算法细节
+
+7. SUMMARY.md (6.4K)
+   - 项目总结
+   - 代码对应关系表
+   - 与原始工具的对比
+   - 输出示例
+
+8. FILES.txt (本文件)
+   - 文件清单
+   - 文件用途说明
+   - 使用建议
+
+================================================================================
+辅助文件（早期版本，可选）
+================================================================================
+
+9. extract_plot_data.py (5.8K)
+   - 早期创建的数据提取工具
+   - 功能已被 compute_capacity_data.py 替代
+   - 保留用于参考
+
+10. plot_from_extracted_data.py (5.1K)
+    - 早期创建的独立绘图工具
+    - 功能已被 plot_capacity_curve_axes0.py 替代
+    - 保留用于参考
+
+11. plot_capacity_curve.py (4.2K)
+    - 早期创建的直接绘图工具
+    - 功能已被 plot_capacity_curve_axes0.py 替代
+    - 保留用于参考
+
+12. PLOTTING_README.md (5.1K)
+    - 早期创建的绘图说明文档
+    - 功能已被其他文档覆盖
+    - 保留用于参考
+
+================================================================================
+数据文件（运行时生成）
+================================================================================
+
+merged.jsonl (39M)
+  - 合并的 trace 文件（如果存在）
+
+traces.jsonl (1.7G)
+  - 原始 trace 文件（如果存在）
+
+输出目录结构（运行后生成）:
+<output_dir>/
+├── capacity_data.json           # 容量数据
+├── capacity_curve.csv          # CSV 表格
+├── litehit_facts.csv          # Facts 文件
+├── capacity_query.jsonl       # 查询结果
+└── capacity_curve_axes0.{png,svg,pdf}  # 图表
+
+================================================================================
+使用流程
+================================================================================
+
+方式 1: 使用现有基线数据（推荐，秒级完成）
+──────────────────────────────────────────
+./run_example.sh \
+    /workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/agentx_sample \
+    ./test_output
+
+方式 2: 完整计算（需要 2-5 分钟）
+──────────────────────────────────────────
+# 步骤 1: 计算数据
+python compute_capacity_data.py \
+  --trace prepared/trace.jsonl \
+  --layout prepared/layout.json \
+  --litehit-config prepared/litehit_config.json \
+  --output-dir output
+
+# 步骤 2: 绘制图表
+python plot_capacity_curve_axes0.py \
+  --capacity-data output/capacity_data.json \
+  --trace-manifest prepared/trace_manifest.json \
+  --layout prepared/layout.json \
+  --output-dir output
+
+================================================================================
+文件依赖关系
+================================================================================
+
+compute_capacity_data.py
+  ├── 输入: trace.jsonl
+  ├── 输入: layout.json
+  ├── 输入: litehit_config.json
+  ├── 工具: lite_hit_main
+  ├── 工具: lite_hit_facts_query_main
+  └── 输出: capacity_data.json, capacity_curve.csv
+
+plot_capacity_curve_axes0.py
+  ├── 输入: capacity_data.json (或 stage1/summary.json)
+  ├── 输入: trace_manifest.json
+  ├── 输入: layout.json
+  └── 输出: capacity_curve_axes0.{png,svg,pdf}
+
+run_example.sh
+  ├── 调用: compute_capacity_data.py (如果需要)
+  └── 调用: plot_capacity_curve_axes0.py
+
+================================================================================
+代码统计
+================================================================================
+
+核心代码:
+  compute_capacity_data.py:     ~170 行
+  plot_capacity_curve_axes0.py: ~140 行
+  run_example.sh:                ~80 行
+  ────────────────────────────────────
+  小计:                         ~390 行
+
+辅助代码:
+  extract_plot_data.py:          ~150 行
+  plot_from_extracted_data.py:   ~130 行
+  plot_capacity_curve.py:        ~100 行
+  ────────────────────────────────────
+  小计:                         ~380 行
+
+文档:
+  INDEX.md + QUICKSTART.md + README.md + SUMMARY.md + PLOTTING_README.md
+  ────────────────────────────────────
+  小计:                        ~2300 行
+
+总计:                          ~3070 行
+
+================================================================================
+对比原始工具
+================================================================================
+
+                        原始工具          测试工具
+────────────────────────────────────────────────────
+代码行数                ~600 行          ~250 行 (核心)
+绘制图表                axes[0] + axes[1]  只 axes[0]
+HiSim 仿真             ✅                ❌
+运行时间 (有基线数据)    秒级              秒级
+运行时间 (完整计算)      10-60 分钟        2-5 分钟
+输出文件                多张图 + HTML     1 张图
+依赖                    HiSim + LiteHit   只 LiteHit
+
+================================================================================
+版本信息
+================================================================================
+
+版本: 1.0
+创建日期: 2024-09-14
+Python 要求: >= 3.8
+依赖库: matplotlib, numpy, pathlib, json, csv
+
+================================================================================
+许可和版权
+================================================================================
+
+来源项目: tair-kvcache
+原始工具: run_workflow.py, analyze_results.py
+提取和精简: Claude Code (Anthropic)
+
+================================================================================
+联系和支持
+================================================================================
+
+文档:
+  - 快速开始: QUICKSTART.md
+  - 完整文档: README.md
+  - 文件索引: INDEX.md
+
+原始工具:
+  - 位置: ../kimi_k3_capacity/
+  - SOP: ../kimi_k3_capacity/SOP.md
+
+基线数据:
+  - 位置: /workspace/dynosim_aic_sweep/reports/.../agentx_sample/
+
+================================================================================
+更新日志
+================================================================================
+
+2024-09-14 v1.0
+  - 初始版本
+  - 从 run_workflow.py 提取 scan() 函数
+  - 从 analyze_results.py 提取 axes[0] 绘图代码
+  - 创建完整文档和示例脚本
+  - 支持使用现有基线数据快速绘图
+
+================================================================================
+文件完整性检查
+================================================================================
+
+核心文件 (必需):
+  [ ] compute_capacity_data.py
+  [ ] plot_capacity_curve_axes0.py
+  [ ] run_example.sh
+
+文档文件 (推荐):
+  [ ] INDEX.md
+  [ ] QUICKSTART.md
+  [ ] README.md
+  [ ] SUMMARY.md
+  [ ] FILES.txt
+
+辅助文件 (可选):
+  [ ] extract_plot_data.py
+  [ ] plot_from_extracted_data.py
+  [ ] plot_capacity_curve.py
+  [ ] PLOTTING_README.md
+
+================================================================================
+快速验证命令
+================================================================================
+
+# 检查文件是否存在
+ls -lh compute_capacity_data.py plot_capacity_curve_axes0.py run_example.sh
+
+# 检查脚本权限
+test -x run_example.sh && echo "✓ run_example.sh 可执行" || echo "✗ 需要 chmod +x"
+
+# 检查 Python 语法
+python -m py_compile compute_capacity_data.py plot_capacity_curve_axes0.py
+
+# 测试运行（使用基线数据）
+./run_example.sh \
+  /workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/agentx_sample \
+  ./test_output
+
+================================================================================
+结束
+================================================================================

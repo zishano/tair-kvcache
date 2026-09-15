@@ -1,0 +1,63 @@
+{
+  "files": [
+    {
+      "path": "REPORT.md",
+      "sha256": "5edbd9e434bdf5a585df800401bcdab2a15213bbde7d2b99335c617a2db59011"
+    },
+    {
+      "path": "capacity_curve.pdf",
+      "sha256": "d3d4088553b2ec4d281d87ce1c0d92f0a5f56175a1e050b7b24333545747719e"
+    },
+    {
+      "path": "capacity_curve.png",
+      "sha256": "f3d66479e49bda373ed7214287b06955c3c1da412fab423dd6e33e5932abbccc"
+    },
+    {
+      "path": "capacity_curve.svg",
+      "sha256": "5733a7d971323fdb70355fc14e5ea95d88f4d75127cd3dcbdd26dace03623d1b"
+    },
+    {
+      "path": "concurrency.pdf",
+      "sha256": "15f5d0569dc9636c385c4c67f04ab02df757159c5a18be1b3f3140d48e4b0523"
+    },
+    {
+      "path": "concurrency.png",
+      "sha256": "22b9ee297fb1da5b7f023339d99a4dc05436a1230919accff1500ecca09057e7"
+    },
+    {
+      "path": "concurrency.svg",
+      "sha256": "0eb98a2dc5d32d9bdb4b3bcb99d165bc76232563073d599721fb6cd8591c53a5"
+    },
+    {
+      "path": "index.html",
+      "sha256": "1e85aa1610df9d8d38487573108d1ce97d95aaafa2a621357581ef392292deb6"
+    },
+    {
+      "path": "resources.pdf",
+      "sha256": "4e74a5929afd708561efb687edb1141300b8d269881ad39be179d9d32f0c74ba"
+    },
+    {
+      "path": "resources.png",
+      "sha256": "755a674205e67ea2d7641b7fea15ffddeab9a694c45e3f56f733e5e05556d17a"
+    },
+    {
+      "path": "resources.svg",
+      "sha256": "845c98479a06beae03e38373162d78b9396e3ff41a5986ccf399ce1d67fdef8a"
+    },
+    {
+      "path": "serving_metrics.pdf",
+      "sha256": "838ecf8e1a7b36d7088982e2fefa28e1add1538a2174d7dbf6debe616609cb10"
+    },
+    {
+      "path": "serving_metrics.png",
+      "sha256": "79517a79a06a97cb1ddd2b9842041b00467f1da98c071171c7aa189741ed5d88"
+    },
+    {
+      "path": "serving_metrics.svg",
+      "sha256": "753b1dd9fcefb077c6b031523c8d28c628e542afd01660a6bb118aa1388ddb0a"
+    }
+  ],
+  "stage2_all_validated": true,
+  "official_agentx_benchmark": false,
+  "gpu_measured": false
+}

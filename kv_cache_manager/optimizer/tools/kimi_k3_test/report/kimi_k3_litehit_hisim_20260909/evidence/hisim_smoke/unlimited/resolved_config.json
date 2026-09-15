@@ -1,0 +1,26 @@
+{
+  "schema": "hisim.hybrid_checkpoint.v1",
+  "trace_path": "/tmp/kimi_hisim_adapter_smoke/trace.jsonl",
+  "layout_path": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/layout.json",
+  "output_dir": "/tmp/kimi_hisim_adapter_smoke/unlimited",
+  "storage": {
+    "capacity_bytes": null,
+    "read_bandwidth_bytes_per_s": 50000000000.0,
+    "write_bandwidth_bytes_per_s": 25000000000.0,
+    "h2d_bandwidth_bytes_per_s": 200000000000.0,
+    "d2h_bandwidth_bytes_per_s": 200000000000.0
+  },
+  "scheduler": {
+    "max_concurrency": 4,
+    "max_prefill_tokens": 8192,
+    "chunked_prefill_tokens": 1024,
+    "active_kda_buffers": 2,
+    "g1_page_tokens": 64,
+    "g1_capacity_bytes": 507506851840
+  },
+  "predictor": {
+    "max_batch_size": 32,
+    "max_num_tokens": 8192,
+    "memory_fraction": 0.9
+  }
+}

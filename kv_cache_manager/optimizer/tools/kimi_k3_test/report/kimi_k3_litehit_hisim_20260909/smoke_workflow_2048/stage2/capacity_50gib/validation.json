@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "request_count": 12,
+  "batch_count": 308,
+  "storage_query_checks": 12,
+  "storage_event_membership_and_pins_replayed": true,
+  "token_and_shape_conservation": true,
+  "metrics_recomputed_from_token_timestamps": true,
+  "finite_capacity_and_g1_bounds_checked": true,
+  "four_io_lanes_nonoverlap_checked": true,
+  "compute_utilization": 0.2574846781727995,
+  "io_utilization_over_storage_drain": {
+    "read": 0.008804080930068351,
+    "write": 0.049117504136170796,
+    "h2d": 0.0044020404650341755,
+    "d2h": 0.012279376034042699
+  },
+  "storage_read_gib": 63.869293212890625,
+  "storage_write_gib": 178.16171264648438,
+  "time_origin": "minimum selected trace arrival",
+  "throughput_denominator_s": 112.79989246597911
+}

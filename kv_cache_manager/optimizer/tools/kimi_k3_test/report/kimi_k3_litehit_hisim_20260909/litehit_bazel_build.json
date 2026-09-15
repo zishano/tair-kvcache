@@ -1,0 +1,12 @@
+{
+  "command": [
+    "bazel",
+    "build",
+    "//kv_cache_manager/optimizer:lite_hit_main",
+    "//kv_cache_manager/optimizer:lite_hit_facts_query_main",
+    "--jobs=4",
+    "--noshow_progress"
+  ],
+  "returncode": 0,
+  "elapsed_wall_s": 3.8967494880780578
+}

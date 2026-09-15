@@ -1,0 +1,44 @@
+[
+  {
+    "path": "/sgl-workspace/sglang/python/sglang/srt/mem_cache/mamba_radix_cache.py",
+    "sha256": "4f395d827c08a111134bd8ae7d54e3db3311c97c2065c64451d19abe7559a6cd",
+    "line_ranges": [
+      [
+        917,
+        946
+      ],
+      [
+        1030,
+        1040
+      ]
+    ]
+  },
+  {
+    "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/sdk/models/kimi_k3.py",
+    "sha256": "27f8a42afc87d422b4bfddab6641f8301b9342926c9fa2a460fba37610bf2bdb",
+    "line_ranges": [
+      [
+        768,
+        794
+      ],
+      [
+        796,
+        806
+      ]
+    ]
+  },
+  {
+    "path": "/workspace/tair-kvcache/kv_cache_manager/optimizer/manager/lite_hit_offline_runner.cc",
+    "sha256": "f15210a158eae494ee7be3af14344beaf1ba6ee4996367fdafdc8bf25b518437",
+    "line_ranges": [
+      [
+        62,
+        100
+      ],
+      [
+        220,
+        246
+      ]
+    ]
+  }
+]

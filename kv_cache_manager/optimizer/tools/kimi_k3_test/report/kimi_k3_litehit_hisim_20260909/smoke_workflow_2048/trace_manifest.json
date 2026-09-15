@@ -1,0 +1,20 @@
+{
+  "source": {
+    "kind": "synthetic_prefix_identity_trace",
+    "seed": 20260909,
+    "hot_domains": 16,
+    "total_domains": 64,
+    "prefix_bundles": 20,
+    "unique_suffix_bundles": 4,
+    "request_rate_per_s": 0.1,
+    "note": "Constructed length and block-identity workload; no real user corpus or GPU measurement"
+  },
+  "requests": 12,
+  "input_tokens": 590208,
+  "output_tokens": 96,
+  "trace_sha256": "ff83db2d0e42f38bf80e59b6788e02c8052ee9af48c908c1bfb31163a9de07d3",
+  "layout_sha256": "96a4b0504a99253b01526cb05df034c28ebf025cc7afce025e11f40735fd4e32",
+  "unique_bundles": 196,
+  "unbounded_resident_payload_gib": 164.71554565429688,
+  "registration_capacity_note": "instance_groups.capacity_gb=[1] is an unused registration placeholder; facts replay has no capacity"
+}

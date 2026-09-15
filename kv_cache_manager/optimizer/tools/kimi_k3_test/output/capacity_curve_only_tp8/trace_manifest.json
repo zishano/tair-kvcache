@@ -1,0 +1,95 @@
+{
+  "source": {
+    "kind": "agentx_observed_arrival_subset",
+    "path": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/kv_cache_manager/optimizer/tools/kimi_k3_test/trace_local/merged.jsonl",
+    "sha256": "d850cdb7f6ac8fbe831e0862a73260061ef97add1f4fd434f6c8f73cedc3f2db",
+    "source_bytes": 37909937,
+    "methodology_url": "https://inferencex.semianalysis.com/agentx",
+    "sessions": [
+      {
+        "session_id": "250281fc-60c",
+        "source_line_1based": 1,
+        "available_leaf_requests": 91,
+        "selected_requests": 24
+      },
+      {
+        "session_id": "43e6d089-3e2",
+        "source_line_1based": 2,
+        "available_leaf_requests": 92,
+        "selected_requests": 24
+      },
+      {
+        "session_id": "ff2e2102-6a9",
+        "source_line_1based": 3,
+        "available_leaf_requests": 2,
+        "selected_requests": 2
+      },
+      {
+        "session_id": "cfd43b85-d6e",
+        "source_line_1based": 4,
+        "available_leaf_requests": 152,
+        "selected_requests": 24
+      },
+      {
+        "session_id": "58a9f369-35e",
+        "source_line_1based": 5,
+        "available_leaf_requests": 40,
+        "selected_requests": 24
+      },
+      {
+        "session_id": "5a5797ea-a68",
+        "source_line_1based": 6,
+        "available_leaf_requests": 7,
+        "selected_requests": 7
+      },
+      {
+        "session_id": "13053ee0-ec8",
+        "source_line_1based": 7,
+        "available_leaf_requests": 95,
+        "selected_requests": 24
+      },
+      {
+        "session_id": "3e646472-156",
+        "source_line_1based": 8,
+        "available_leaf_requests": 2,
+        "selected_requests": 2
+      }
+    ],
+    "leaf_requests_examined": 481,
+    "filtered_requests": {
+      "beyond_per_session_sample": 184,
+      "outside_source_time_window": 166
+    },
+    "selected_subagent_requests": 20,
+    "prefix_parent_checks": 103130,
+    "hash_globalization": "(source_session_line_1based << 32) | local_prefix_hash_id; children share session namespace",
+    "keys_are_prefix_chained": true,
+    "model_mapping": "all selected source-model requests -> moonshotai/Kimi-K3",
+    "arrival_policy": "all selected sessions start together; observed session-relative timestamps / time_scale; fixed across capacities",
+    "time_scale": 10.0,
+    "source_time_window_s": 3600.0,
+    "requests_per_session_limit": 24,
+    "max_input_tokens": 262144,
+    "preserved_exactly": [
+      "input_len",
+      "output_len",
+      "within_session_prefix_identity",
+      "nested_stream_identity"
+    ],
+    "not_preserved": [
+      "closed_loop_completion_dependent_arrivals",
+      "original_model_latency",
+      "original_model_tokenizer"
+    ],
+    "official_agentx_benchmark": false,
+    "note": "No original payloads. No 25-75% random start, primer, one-hour profiling, forced speculative acceptance, or model quality claim"
+  },
+  "requests": 131,
+  "input_tokens": 6604327,
+  "output_tokens": 168841,
+  "trace_sha256": "3eb97d05355d39ed3a11a3ef4c297bafa10a092f236decaf4d0aa6492f3b2ee7",
+  "layout_sha256": "e2085e1607bf3bdce166ab6121907cf23569bf241372de0995143d0fcab9d5c7",
+  "unique_bundles": 968,
+  "unbounded_resident_payload_gib": 609.3056030273438,
+  "registration_capacity_note": "instance_groups.capacity_gb=[1] is an unused registration placeholder; facts replay has no capacity"
+}

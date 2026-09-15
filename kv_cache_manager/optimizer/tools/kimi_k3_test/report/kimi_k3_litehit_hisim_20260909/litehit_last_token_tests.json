@@ -1,0 +1,15 @@
+{
+  "command": [
+    "bazel",
+    "test",
+    "//kv_cache_manager/optimizer/test:LiteHitOfflineRunnerTest",
+    "//kv_cache_manager/optimizer/test:OptimizerConfigTest",
+    "//kv_cache_manager/optimizer:lite_hit_main",
+    "//kv_cache_manager/optimizer:lite_hit_facts_query_main",
+    "--jobs=4",
+    "--test_output=errors",
+    "--noshow_progress"
+  ],
+  "returncode": 0,
+  "elapsed_wall_s": 13.34374601393938
+}

@@ -1,0 +1,5 @@
+INFO: Build option --test_env has changed, discarding analysis cache.
+INFO: Analyzed 2 targets (1 packages loaded, 473 targets configured).
+INFO: Found 2 targets...
+INFO: Elapsed time: 3.862s, Critical Path: 3.14s
+INFO: 8 processes: 1 internal, 7 local.

@@ -1,0 +1,16 @@
+{
+  "unit_tests_python": 23,
+  "bazel_suites_passed": 4,
+  "bazel_cached": true,
+  "primary_scenarios": 6,
+  "primary_request_capacity_oracle_checks": 7009,
+  "extra_checkpoint_tokens": 2048,
+  "extra_scenarios": 4,
+  "independent_stage2_audit": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/evidence/hisim_stage2_audit.md",
+  "runtime_source_hashes_verified": 71,
+  "offline_html_local_resources_checked": true,
+  "existing_user_modified_mock_config_excluded": true,
+  "all_passed": true,
+  "git_diff_check_passed": true,
+  "final_report_hashes_verified": true
+}

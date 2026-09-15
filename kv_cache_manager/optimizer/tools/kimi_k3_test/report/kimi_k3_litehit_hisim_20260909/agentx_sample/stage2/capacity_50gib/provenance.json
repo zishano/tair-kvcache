@@ -1,0 +1,848 @@
+{
+  "schema": "hisim.hybrid_checkpoint.v1",
+  "measurement_kind": "controlled_hisim_aic_cpu_simulation",
+  "native_sglang_scheduler": false,
+  "gpu_kernels_executed": false,
+  "physical_g1_budget_bytes_all_ranks": 507506851840,
+  "trace_path": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/agentx_sample/trace.jsonl",
+  "trace_sha256": "9602b6877341fec39f1e407d7a79960d3e5e87f1eeeaf5a42bb204ac7fa9644e",
+  "layout_path": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/agentx_sample/layout.json",
+  "layout_sha256": "1526a946b2abe616ccaf6d4910ab13eb300729f69f1b7ef76ab1d7e5d483585d",
+  "config_path": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/agentx_sample/stage2/configs/capacity_50gib.json",
+  "config_sha256": "fd5ffa66ce745e47c0127b32f7e1ea3728be2797bf4662f01ed83b6ead6ff37b",
+  "adapter_path": "/workspace/tair-kvcache/hisim/src/hisim/simulation/hybrid_checkpoint.py",
+  "adapter_sha256": "aadd5c40689c67577bfaa1b8083d3da23a5f2f833fb10547c078b95f547a4c32",
+  "scheduler": "FCFS admission; prefill-first; chunk/token/checkpoint-boundary limits; decode-only otherwise; no preemption",
+  "storage": "atomic MLA+KDA-SSM+KDA-convolution bundles; snapshot query and read pins; write-completion visibility; tail-to-head commit",
+  "storage_accounting_scope": "all_tp_rank_payloads",
+  "query_time": "admission, after FCFS/max_concurrency/G1 gates",
+  "predictor_query_reuse": "exact per-request shape memoization; each batch references aic_query_id; predictor provenance query/source counters cover unique queried shapes",
+  "simulation_clock_origin": "minimum trace timestamp; arrivals in seconds scaled by arrival_scale",
+  "write_source": "all newly computed complete input checkpoints; reused-prefix touches only if still resident",
+  "g1_policy": "full input plus maximum output MLA; active KDA buffers and conservative per-input-checkpoint KDA staging reservation; no cross-request sharing",
+  "io_policy": "independent FIFO storage read/write and H2D/D2H lanes; aggregate bytes/s; read pins retained through H2D",
+  "host_staging_policy": "unbounded host staging; complete read/write transfer buffers reserved at submission until completion; conservative reserved peak recorded; no cross-request host cache",
+  "limitations": [
+    "Controlled queue adapter, not native SGLang Kimi-K3 or GPU measurements.",
+    "AIC predictions require calibration before production SLA or sustainable-capacity claims.",
+    "No CUDA graphs, scheduler overlap, mixed prefill/decode, speculative decoding, or request preemption.",
+    "Checkpoint materialization is a declared simulation policy, not a claim about this SGLang version's default Mamba cache.",
+    "GPU-local checkpoint snapshot copies are not timed separately; endpoint state exists at forward completion and D2H/storage transfers are timed.",
+    "Trace-driven active/outstanding peaks are observations, not maximum sustainable concurrency."
+  ],
+  "layout": {
+    "schema_version": "hisim_hybrid_checkpoint_layout_v1",
+    "model_name": "moonshotai/Kimi-K3",
+    "model_config_path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/model_configs/moonshotai--Kimi-K3_config.json",
+    "model_config_sha256": "9710e121a58d03ac92c8d6da287a19541994319afbbe6d6202af001ffd379213",
+    "attention_tp_size": 8,
+    "checkpoint_tokens": 1024,
+    "native_block_tokens": 64,
+    "mla_layers": 24,
+    "kda_layers": 69,
+    "mla_layer_ids_1based": [
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      28,
+      32,
+      36,
+      40,
+      44,
+      48,
+      52,
+      56,
+      60,
+      64,
+      68,
+      72,
+      76,
+      80,
+      84,
+      88,
+      92,
+      93
+    ],
+    "kda_layer_ids_1based": [
+      1,
+      2,
+      3,
+      5,
+      6,
+      7,
+      9,
+      10,
+      11,
+      13,
+      14,
+      15,
+      17,
+      18,
+      19,
+      21,
+      22,
+      23,
+      25,
+      26,
+      27,
+      29,
+      30,
+      31,
+      33,
+      34,
+      35,
+      37,
+      38,
+      39,
+      41,
+      42,
+      43,
+      45,
+      46,
+      47,
+      49,
+      50,
+      51,
+      53,
+      54,
+      55,
+      57,
+      58,
+      59,
+      61,
+      62,
+      63,
+      65,
+      66,
+      67,
+      69,
+      70,
+      71,
+      73,
+      74,
+      75,
+      77,
+      78,
+      79,
+      81,
+      82,
+      83,
+      85,
+      86,
+      87,
+      89,
+      90,
+      91
+    ],
+    "kv_dtype": "bfloat16",
+    "conv_dtype": "bfloat16",
+    "state_dtype": "float32",
+    "mla_bytes_per_token_per_rank": 27648,
+    "kda_ssm_bytes_per_checkpoint_per_rank": 54263808,
+    "kda_conv_bytes_per_checkpoint_per_rank": 1907712,
+    "kda_state_bytes_per_checkpoint_per_rank": 56171520,
+    "bundle_bytes_per_rank": 84483072,
+    "bundle_bytes": 675864576,
+    "storage_scope": "all_tp_rank_payloads",
+    "capacity_unit": "GiB_payload",
+    "policy": "atomic_checkpoint_bundle_lru",
+    "commit_order": "tail_to_head",
+    "g1_cross_request_cache": false,
+    "speculative_decoding": false,
+    "payload_accounting": "All TP rank tensor payloads retained, including replicated MLA; excludes storage index overhead",
+    "restore_contract": "continuous full bundles and all KDA states at endpoint; no partial checkpoint hit",
+    "backend_scope": "explicit KVCM bundle policy, not default SGLang Mamba dual-pool policy"
+  },
+  "predictor": {
+    "aic_source_root": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync",
+    "aic_git_commit": "ec215200d05cf6899d0d472b75ceafa6b53c432f",
+    "aic_git_status": "",
+    "model": "moonshotai/Kimi-K3",
+    "system": "b300_sxm",
+    "backend": "sglang",
+    "backend_version": "0.5.16",
+    "database_mode": "SILICON",
+    "engine_config": {
+      "tp_size": 8,
+      "pp_size": 1,
+      "attention_dp_size": 1,
+      "moe_tp_size": 1,
+      "moe_ep_size": 8,
+      "gemm_quant_mode": "fp8",
+      "moe_quant_mode": "w4a8_mxfp4_mxfp8",
+      "kvcache_quant_mode": "bfloat16",
+      "fmha_quant_mode": "bfloat16",
+      "nextn": 0
+    },
+    "engine_spec_sha256": "59fa4ca5a6c663864a6934cd9a102156afc3b0a671322ec7ecd5450174a0ea33",
+    "memory_profile": {
+      "source": "AIC native weights and reservations; explicit physical hybrid state geometry",
+      "gpu_capacity_bytes": 288400343040,
+      "memory_fraction_of_total": 0.9,
+      "weights_bytes": 189461135360,
+      "activations_bytes": 1740059443,
+      "runtime_overhead_bytes": 4509715660,
+      "comm_overhead_bytes": 411041792,
+      "kv_budget_bytes": 63438356480,
+      "mla_kv_bytes_per_token_per_rank": 27648,
+      "kda_ssm_bytes_per_slot_per_rank": 54263808,
+      "kda_conv_bytes_per_slot_per_rank": 1907712,
+      "kda_state_bytes_per_slot_per_rank": 56171520,
+      "aic_native_state_slots_per_request": 5,
+      "scheduler_state_slots_per_request": "explicit caller input; not inferred from AIC five-slot proxy",
+      "rank_count": 8,
+      "max_num_tokens": 8192,
+      "max_batch_size": 32,
+      "max_context_length": 1048576
+    },
+    "source_sha256": {
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/_aiconfigurator_core.abi3.so": "2c859fea897e2f8a66bc30ea781f8520a34ad6aad40cc910db22323e64436137",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/model_configs/moonshotai--Kimi-K3_config.json": "9710e121a58d03ac92c8d6da287a19541994319afbbe6d6202af001ffd379213",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/sdk/backends/base_backend.py": "3171bee35dbde65d0828c9ff1e67ea652fb4af29514768ae403cbbe4e9dd0683",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/sdk/engine.py": "2f029d98b740e785be3798a2cde0ded49966387f3ce4dd9191e13bb01e83439c",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/sdk/memory.py": "54f6dd08bc8a0e2edb631ccbe1dab1cd2142ce65cbdf67b653fba1b3fcee23be",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/sdk/models/kimi_k3.py": "27f8a42afc87d422b4bfddab6641f8301b9342926c9fa2a460fba37610bf2bdb",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/b300_sxm.yaml": "962a61b1e0458a2fbda2a6875b78db8cf9f51714bed314247302b46caa959f31",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/attention/sglang/0.5.14/collection_meta.yaml": "e8fa7dfc0c865ece82becbf696223b1d3909cb84e98e1acbe6a1d06aeaf7c247",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/attention/sglang/0.5.14/context_attention_perf.parquet": "da62cdb3431878bff65bb26fe1493a2e6c857437d005b7778a24288e94fe15e3",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/attention/sglang/0.5.14/generation_attention_perf.parquet": "588f01da4ceaacd8979ef15d2e535cd6f926266f161cece8f05442c8a67cdb68",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.10/collection_meta.yaml": "1f539fa280fe89953c6ce7d5655691702e8572e2f33f9ab7a6c34b34ac4993e9",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.10/custom_allreduce_perf.parquet": "0751d107a8e2c54df14558b94585624b0de5e09f1ce0356f8132ab0a1e2a7f2d",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.12/collection_meta.yaml": "1fbcb155d7b0b7388896334bc347a9ded8b1065d1a8502673e1e5852072886f0",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.12/wideep_deepep_ll_perf.parquet": "a30b3fd3c656d975350f5d4bee66ec3f3372012620c7cc6cf8627fde41094fda",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.12/wideep_deepep_normal_perf.parquet": "181453bd67a8f8c8cd1d1664b434845897e9b40802eb851a868068b759b85b33",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.14/collection_meta.yaml": "7fde4cb955fb23b33c1dcb52528f19ea87c1b312cbb57c32093530fc9db6a1d9",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.14/custom_allreduce_perf.parquet": "fda78312580ed4045af875f90500d3292235ea00552ec62cd56e0a1492aa2cea",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.9/collection_meta.yaml": "afa1efd375d2c9d0f1db64e375505ec3a5559e01d531875c11d6155ec4ecf151",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.9/custom_allreduce_perf.parquet": "f725994d03729449e002b21f48aafcc20d9b2eeba38ebcf095850999356a2031",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/encoder_attention/sglang/0.5.14/collection_meta.yaml": "9f542e6b801e8c10b81b5133cd8fb6c03b926de6896d1cfc2320a87442c76d49",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/encoder_attention/sglang/0.5.14/encoder_attention_perf.parquet": "9175b22129bd1225b909a58ce7104eb6bb9bd6e13be2bd3e933f931db42098a4",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/gemm/sglang/0.5.14/collection_meta.yaml": "27cea70ce1c98d20a0e38cc32ded1357d6ddacd204e5bf8519f40f732a203e94",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/gemm/sglang/0.5.14/gemm_perf.parquet": "54d5ab40ff8e405c786fd7a6034345c29d865df6df4d2911a267dee731443726",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/kda/sglang/0.5.16/collection_meta.yaml": "f09dc10a7fe65a6b17b0ea5efedf7776b4dcd813d28a068554d09af642fdfd26",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/kda/sglang/0.5.16/kda_perf.parquet": "7f07a09594dce2e5cb788b68dc25a9dd3dac00f6189c292d485943ef6ad44307",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/kda/vllm/0.1.dev19262/collection_meta.yaml": "b087ccb4638ea6705d924e5655543ceee3e6f6481dd3b5a68163e8fcceec5075",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/kda/vllm/0.1.dev19262/kda_perf.parquet": "ee2da9c94b72793ced99f8a5e1bc8c6df09e9706317ea2b6f9050d47d2d54929",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/sglang/0.5.14/collection_meta.yaml": "f3aea56d17116582bd149e08a1b63d467265a91780c19e27aadf57dc1a116d08",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/sglang/0.5.14/gdn_perf.parquet": "2715b6d08c00deb59872eebfd245a6791ac940104c728cf74f038b8809f134dd",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/trtllm/1.3.0rc20/collection_meta.yaml": "ee478037a14c79743750e176eb31f018ed1b1d78b17d69d72a873f36c01a66b3",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/trtllm/1.3.0rc20/gdn_perf.parquet": "77c0a3b1032b04b5b77f25ca2950df546ddc5e2ff99aeffae6d149ca25cd99d2",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/vllm/0.24.0/collection_meta.yaml": "fda70302af3ed3f9fc9da29199cf89eb0bd4bb4bf5dafc99b20e97a35ea92603",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/vllm/0.24.0/gdn_perf.parquet": "860383a4df6818ec4dc353d7a9d0698fce6eb3c4bc3c12f83bb8261ae7d240c7",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mhc/sglang/0.5.14/collection_meta.yaml": "dec37320b12b1291cec5ce085409a4f3fa8960f77a6361bff4e2ee9fad6760bc",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mhc/sglang/0.5.14/mhc_module_perf.parquet": "32bb3438115ac81d812cc860fef442830bba06d341059dba93d179e4fe934484",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.10/collection_meta.yaml": "02fcc55c088c770911334bc9aa274fa6ade733d6aaa1f360e8ac10bd6eded099",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.10/wideep_context_mla_perf.parquet": "073e56726ccac844ef3a98bc51ad97c48eac80406c48a0773f2389427c64a56a",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.10/wideep_generation_mla_perf.parquet": "b0c63fe5cfa9a496e782215d7767811080946d5d388a44aab78cb2200f59cf9b",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.14/collection_meta.yaml": "7db79d7880f1939687a50be5b488c798cde7a45734464997e298ebefefeec7cd",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.14/context_mla_perf.parquet": "ea217601adf3c847fe2b35cf7fbbae790b81e8d66e42b0d63c64552d6512faf2",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.14/generation_mla_perf.parquet": "12070ef29a3d074644518b970b5c5e7b8ef6bae773f2d7db2c13a5668172f6a6",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.9/collection_meta.yaml": "ebfdd8e8e85b206b58ff1c45417cddabed915640682be2f13966036e01d6c218",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.9/wideep_context_mla_perf.parquet": "a0721292c17c99b26ac7ab88efeeb6ceee0eb7767fcd1c8df4c7f22518895056",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.9/wideep_generation_mla_perf.parquet": "114c23cf6353be10f7791e9a723e200b8fdc29d111c3151a50ab32091a2ebd36",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla_bmm/sglang/0.5.14/collection_meta.yaml": "a250c933eb64dda6a63c13d44be6ffe84af5b7ad4998bba7c8eeacb941961b24",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla_bmm/sglang/0.5.14/mla_bmm_perf.parquet": "f5978e6a0ed03fd3e36262e02d76c75a5d8e40c7f6f1ce7edaf82c75cb0825ae",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla_bmm/trtllm/1.3.0rc20/collection_meta.yaml": "d54d5b72cd6ac5c15e373a9ba936792157c001cfac71d8805b1b914b2af40168",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla_bmm/trtllm/1.3.0rc20/mla_bmm_perf.parquet": "995f64ce84fc4fbc092a96687bc5656ee647f29797cdf3385d10f59293eeabae",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.10/collection_meta.yaml": "80973da827d710967492ad968972d176eff8581253a99f6dd276e6c018f55429",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.10/wideep_context_moe_perf.parquet": "b56aacc1df0f3c693532d40913c8667c590958f0594ccb3af22890d3a7e3d17e",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.10/wideep_generation_moe_perf.parquet": "105e3383d41bad25b02b576833016521b5122ec1571b4906b30040e3e8c83b27",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.14/collection_meta.yaml": "96ba16f76fdb67e5edefbcf9d3ba41a955d4a234b49995c72e45da1329d5ee50",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.14/moe_perf.parquet": "e51de901466beeca9c7bf805edcbf79f3ddbf2f6b2f09f0a1e7baf372e3902de",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/msa/sglang/0.5.16/collection_meta.yaml": "ead769821cae40f29aa57e4914f9fb612a194786421aeb8dc3d5b46e82a0ecab",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/msa/sglang/0.5.16/msa_context_module_perf.parquet": "77fca10d613df069fb92153ff8b04ad4ca2b5172412af19a8c20ba0a8b81d907",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/msa/sglang/0.5.16/msa_generation_module_perf.parquet": "64b84a03bf1b348bd2d7e3f2144f36c0879fbc9f16ce1f021ff72a318ec7452d",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/quantize/sglang/0.5.14/collection_meta.yaml": "44de68e9b62661264b1b4f53773c8b228290652cb2e2bfa99e19c91cd12dfa08",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/quantize/sglang/0.5.14/computescale_perf.parquet": "fbfb00c6e8c954baeb8f88589365203fc6fa99b039aa714ea16c392567fb1268",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/quantize/sglang/0.5.14/scale_matrix_perf.parquet": "0cab5f21092e3d3aad5650028ca5ae15a3187b0258994c93b1f3eb059cc2676c",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/collection_meta.yaml": "158ed84a685dbb6c0094d79074ced5bf924352ed7de5698743442bb482659c5b",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsa_context_module_perf.parquet": "ad8cf57a1a44e9a2bb0a56a957c7441257b5ae2a89fb9c52608a768702ba3cf3",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsa_generation_module_perf.parquet": "2976cb819bba29e0ec2a367b8311a509205fd05282c255c1549c8f4ca3e16dfe",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_csa_context_module_perf.parquet": "c3b531a3d55bb279710c1dbb14a9a964673e195922c84a689b99bfd11741b5e7",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_csa_generation_module_perf.parquet": "135e5dbc1eeb073c8dd0dfda67e7173bad312ede22eba85466f20c5433603b61",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_csa_topk_calib_perf.parquet": "6f79cb05126f587743b63057755357c91868671c92694ecdfe9e6e7460afb949",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_hca_context_module_perf.parquet": "f8f46c545759f50e443acf7894ad585a98dfe50777d14662119f97cc866e20a7",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_hca_generation_module_perf.parquet": "87256fdbf8e287fd2c994f16376b86cc03645b1b17380b104ef8b2344d3c6b74",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_paged_mqa_logits_module_perf.parquet": "b2930c02b5e35362f3ac2d20aaeb72ed2da3a97da006401a701e0a96e24d8cbf",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/query_versions.yaml": "2632da0919d716f76928374e3a419bfa3fe7dc639074c925b02b40ccdad98158",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/pyproject.toml": "10d9d71c9e350d29749d2127b7076a063e145068d178e58fc6df12f708bdd646",
+      "/workspace/tair-kvcache/hisim/src/hisim/time_predictor/kimi_k3.py": "efcc5733b8e26782c4eea38c839c0981f545a38567c7ecee30cf2fb465cdbc31"
+    },
+    "admitted_table_sources": {
+      "gemm_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/gemm_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/gemm/sglang/0.5.14/gemm_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "nccl_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/nccl_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        }
+      ],
+      "oneccl_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/oneccl_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        }
+      ],
+      "generation_attention_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/generation_attention_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/attention/sglang/0.5.14/generation_attention_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "context_attention_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/context_attention_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/attention/sglang/0.5.14/context_attention_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "encoder_attention_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/encoder_attention_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/encoder_attention/sglang/0.5.14/encoder_attention_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "context_mla_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/context_mla_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.14/context_mla_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "generation_mla_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/generation_mla_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.14/generation_mla_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "mla_bmm_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/mla_bmm_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla_bmm/sglang/0.5.14/mla_bmm_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        },
+        {
+          "version": "1.3.0rc20",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla_bmm/trtllm/1.3.0rc20/mla_bmm_perf.parquet",
+          "channel": "cross_backend",
+          "exists": true
+        }
+      ],
+      "moe_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/moe_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.14/moe_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "custom_allreduce_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/custom_allreduce_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.14/custom_allreduce_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        },
+        {
+          "version": "0.5.10",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.10/custom_allreduce_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        },
+        {
+          "version": "0.5.9",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.9/custom_allreduce_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "wideep_context_mla_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/wideep_context_mla_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.10",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.10/wideep_context_mla_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        },
+        {
+          "version": "0.5.9",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.9/wideep_context_mla_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "wideep_generation_mla_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/wideep_generation_mla_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.10",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.10/wideep_generation_mla_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        },
+        {
+          "version": "0.5.9",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.9/wideep_generation_mla_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "wideep_context_moe_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/wideep_context_moe_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.10",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.10/wideep_context_moe_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "wideep_generation_moe_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/wideep_generation_moe_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.10",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.10/wideep_generation_moe_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "wideep_deepep_normal_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/wideep_deepep_normal_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.12",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.12/wideep_deepep_normal_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "wideep_deepep_ll_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/wideep_deepep_ll_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.12",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.12/wideep_deepep_ll_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "wideep_moe_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/wideep_moe_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        }
+      ],
+      "moe_a2a_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/moe_a2a_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        }
+      ],
+      "moe_expert_compute_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/moe_expert_compute_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        }
+      ],
+      "trtllm_alltoall_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/trtllm_alltoall_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        }
+      ],
+      "computescale_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/computescale_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/quantize/sglang/0.5.14/computescale_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "scale_matrix_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/scale_matrix_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/quantize/sglang/0.5.14/scale_matrix_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "mamba2_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/mamba2_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        }
+      ],
+      "gdn_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/gdn_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/sglang/0.5.14/gdn_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        },
+        {
+          "version": "1.3.0rc20",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/trtllm/1.3.0rc20/gdn_perf.parquet",
+          "channel": "cross_backend",
+          "exists": true
+        },
+        {
+          "version": "0.24.0",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/vllm/0.24.0/gdn_perf.parquet",
+          "channel": "cross_backend",
+          "exists": true
+        }
+      ],
+      "kda_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/kda/sglang/0.5.16/kda_perf.parquet",
+          "channel": "primary",
+          "exists": true
+        },
+        {
+          "version": "0.1.dev19262",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/kda/vllm/0.1.dev19262/kda_perf.parquet",
+          "channel": "cross_backend",
+          "exists": true
+        }
+      ],
+      "mla_context_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/mla_context_module_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        }
+      ],
+      "mla_generation_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/mla_generation_module_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        }
+      ],
+      "dsa_context_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsa_context_module_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsa_context_module_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "dsa_generation_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsa_generation_module_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsa_generation_module_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "msa_context_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/msa/sglang/0.5.16/msa_context_module_perf.parquet",
+          "channel": "primary",
+          "exists": true
+        }
+      ],
+      "msa_generation_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/msa/sglang/0.5.16/msa_generation_module_perf.parquet",
+          "channel": "primary",
+          "exists": true
+        }
+      ],
+      "mhc_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/mhc_module_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mhc/sglang/0.5.14/mhc_module_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "dsv4_csa_context_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_csa_context_module_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_csa_context_module_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "dsv4_hca_context_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_hca_context_module_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_hca_context_module_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "dsv4_csa_generation_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_csa_generation_module_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_csa_generation_module_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "dsv4_hca_generation_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_hca_generation_module_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_hca_generation_module_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "dsv4_paged_mqa_logits_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_paged_mqa_logits_module_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_paged_mqa_logits_module_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "dsv4_hca_attn_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_hca_attn_module_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        }
+      ],
+      "dsv4_csa_attn_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_csa_attn_module_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        }
+      ],
+      "dsv4_csa_topk_calib_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_csa_topk_calib_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        },
+        {
+          "version": "0.5.14",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_csa_topk_calib_perf.parquet",
+          "channel": "fallback",
+          "exists": true
+        }
+      ],
+      "dsv4_megamoe_module_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_megamoe_module_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        }
+      ],
+      "fpm_forward_perf.parquet": [
+        {
+          "version": "0.5.16",
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/fpm_forward_perf.parquet",
+          "channel": "primary",
+          "exists": false
+        }
+      ]
+    },
+    "limitations": [
+      "CPU operation-level simulation; no GPU serving measurements were collected by this workflow.",
+      "AIC SILICON queries include built-in empirical elementwise/normalization/AttnRes operations; silicon tags may include interpolation or extrapolation.",
+      "SGLang 0.5.16 KDA data are required; Rust ANALYTICAL mode does not implement KDA in this checkout.",
+      "Heterogeneous lengths use standard homogeneous AIC queries with ceil means. Only MLA context latency/energy are explicitly corrected by sum(q*(q+2*p))/(batch*q_mean*(q_mean+2*p_mean)); AIC itself ignores the generic MLA imbalance knob. Discrete causal pair counts and native unscaled times are retained. Decode uses ceil mean past plus one current token.",
+      "For the packaged B300/SGLang BF16 MLA tables, prefill full sequence lengths above 32768 at batch 1/2 and decode lengths above 131072 are extrapolated; the native source tag remains silicon. Smaller measured prefill limits apply at larger batches.",
+      "Table-source records describe admitted priority-ordered files, not the selected row for every interpolated query.",
+      "AIC uses its configured power_law expert-routing distribution; synthetic traces do not supply measured expert routing.",
+      "No speculative model, no latency correction fit, no communication/compute overlap added by this adapter.",
+      "Memory is per rank. G1 tokens and KDA active/checkpoint/staging state slots must be budgeted explicitly by the scheduler."
+    ],
+    "queries": 13443,
+    "unique_query_shapes": 12989,
+    "modeled_source_latency_ms_across_queries": {
+      "empirical": 37823.28329262275,
+      "silicon": 429755.42614727793
+    }
+  }
+}

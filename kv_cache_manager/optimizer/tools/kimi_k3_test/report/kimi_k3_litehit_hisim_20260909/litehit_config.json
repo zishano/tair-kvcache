@@ -1,0 +1,123 @@
+{
+  "trace_file_path": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/trace.jsonl",
+  "output_result_path": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/stage1",
+  "block_size": 256,
+  "pipeline_worker_count": 1,
+  "instance_groups": [
+    {
+      "name": "kimi-k3-bundles",
+      "capacity_gb": [
+        1
+      ],
+      "eviction_policy": "lru",
+      "ttl_seconds": 0,
+      "enable_prefix_hash": true
+    }
+  ],
+  "instances": [
+    {
+      "instance_group_name": "kimi-k3-bundles",
+      "instance_id": "kimi-k3.tp8.checkpoint1024",
+      "block_size": 1024,
+      "linear_step": 1,
+      "location_spec_infos": [
+        {
+          "name": "mla.tp0",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp0",
+          "size": 56171520
+        },
+        {
+          "name": "mla.tp1",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp1",
+          "size": 56171520
+        },
+        {
+          "name": "mla.tp2",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp2",
+          "size": 56171520
+        },
+        {
+          "name": "mla.tp3",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp3",
+          "size": 56171520
+        },
+        {
+          "name": "mla.tp4",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp4",
+          "size": 56171520
+        },
+        {
+          "name": "mla.tp5",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp5",
+          "size": 56171520
+        },
+        {
+          "name": "mla.tp6",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp6",
+          "size": 56171520
+        },
+        {
+          "name": "mla.tp7",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp7",
+          "size": 56171520
+        }
+      ],
+      "location_spec_groups": [
+        {
+          "name": "full",
+          "spec_names": [
+            "mla.tp0",
+            "mla.tp1",
+            "mla.tp2",
+            "mla.tp3",
+            "mla.tp4",
+            "mla.tp5",
+            "mla.tp6",
+            "mla.tp7"
+          ]
+        },
+        {
+          "name": "linear",
+          "spec_names": [
+            "kda.tp0",
+            "kda.tp1",
+            "kda.tp2",
+            "kda.tp3",
+            "kda.tp4",
+            "kda.tp5",
+            "kda.tp6",
+            "kda.tp7"
+          ]
+        }
+      ],
+      "optimizer_state_info": {
+        "full_location_spec_group_name": "full",
+        "linear_location_spec_group_name": "linear"
+      }
+    }
+  ]
+}

@@ -11,7 +11,8 @@
     },
     "predictor": {
         "name": "aiconfigurator",
-        "device_name": "h100_sxm"
+        "device_name": "h20_sxm",
+        "database_path": "/workspace/download/aic"
     },
     "scheduler": {
         "tp_size": 1,

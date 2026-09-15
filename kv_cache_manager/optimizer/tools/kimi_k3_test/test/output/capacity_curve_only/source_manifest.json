@@ -1,0 +1,53 @@
+{
+  "python_executable": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/.venv/bin/python",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "repository": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache",
+  "git_head": "a6e5d176c96009ba76c0ebb70e83cfb113fe9e65",
+  "sources": [
+    {
+      "path": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/kv_cache_manager/optimizer/tools/kimi_k3_test/run_workflow.py",
+      "sha256": "6ca82f0232d72e9c4079c7d33bc9034e5874f93a1de1eb8a718669342d35a576"
+    },
+    {
+      "path": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/kv_cache_manager/optimizer/tools/kimi_k3_test/analyze_results.py",
+      "sha256": "6d9d49ab68b1416f17fddcb8962bbf0373e3b2cd1ef47aa609a91a76a85fafe6"
+    },
+    {
+      "path": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/kv_cache_manager/optimizer/tools/kimi_k3_test/SOP.md",
+      "sha256": "aaa2e9a41ec0a89f7394077adff90ea3d1a55752e8397c311ef46d8211239910"
+    },
+    {
+      "path": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/hisim/src/hisim/simulation/hybrid_checkpoint.py",
+      "sha256": "aadd5c40689c67577bfaa1b8083d3da23a5f2f833fb10547c078b95f547a4c32"
+    },
+    {
+      "path": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/hisim/src/hisim/simulation/bench_serving.py",
+      "sha256": "debd634d185b27ceb550fb9e71ee671d25bb0fe610bb2ab09f46717bf4eb5e92"
+    },
+    {
+      "path": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/hisim/src/hisim/time_predictor/kimi_k3.py",
+      "sha256": "efcc5733b8e26782c4eea38c839c0981f545a38567c7ecee30cf2fb465cdbc31"
+    },
+    {
+      "path": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/kv_cache_manager/optimizer/manager/lite_hit_offline_runner.cc",
+      "sha256": "f15210a158eae494ee7be3af14344beaf1ba6ee4996367fdafdc8bf25b518437"
+    },
+    {
+      "path": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/kv_cache_manager/optimizer/config/optimizer_lite_hit_config.h",
+      "sha256": "67f1b73e579e60564ee2fca4dd9178fce24d30fe8e47fb5d435fbc3633194c87"
+    },
+    {
+      "path": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/kv_cache_manager/optimizer/config/optimizer_lite_hit_config.cc",
+      "sha256": "7236ab8c26dce4ff379820257999eb219e6df997bdfd9ae51d45404d6f7b70e2"
+    },
+    {
+      "path": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/bazel-bin/kv_cache_manager/optimizer/lite_hit_main",
+      "sha256": "bf0a72171750d5b63ee70835df821bef4ae0fd993bd0840d2cb9444dba4c0483"
+    },
+    {
+      "path": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/bazel-bin/kv_cache_manager/optimizer/lite_hit_facts_query_main",
+      "sha256": "70c619878ae6143d384fcc629783b1212afe6bbe8a7bb9006a39ab5fb4fb7371"
+    }
+  ],
+  "note": "Working-tree source hashes identify uncommitted changes; no commit or remote publish performed"
+}

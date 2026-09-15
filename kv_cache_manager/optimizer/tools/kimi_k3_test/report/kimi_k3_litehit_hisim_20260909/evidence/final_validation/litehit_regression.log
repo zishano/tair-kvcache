@@ -1,0 +1,11 @@
+INFO: Analyzed 4 targets (0 packages loaded, 4 targets configured).
+INFO: Found 4 test targets...
+INFO: Elapsed time: 0.291s, Critical Path: 0.02s
+INFO: 1 process: 1 internal.
+//kv_cache_manager/optimizer/test:LiteHitOfflineRunnerTest      (cached) PASSED in 0.1s
+//kv_cache_manager/optimizer/test:LiteHitTest                   (cached) PASSED in 0.1s
+//kv_cache_manager/optimizer/test:LiteHitTtlTest                (cached) PASSED in 0.1s
+//kv_cache_manager/optimizer/test:OptimizerConfigTest           (cached) PASSED in 0.0s
+
+Executed 0 out of 4 tests: 4 tests pass.
+There were tests whose specified size is too big. Use the --test_verbose_timeout_warnings command line option to see which ones these are.

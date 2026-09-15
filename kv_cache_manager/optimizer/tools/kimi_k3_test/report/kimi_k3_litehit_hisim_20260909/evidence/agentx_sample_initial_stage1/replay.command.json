@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/workspace/tair-kvcache/bazel-bin/kv_cache_manager/optimizer/lite_hit_main",
+    "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/agentx_sample/litehit_config.json"
+  ],
+  "cwd": "/workspace/tair-kvcache",
+  "returncode": 0,
+  "elapsed_wall_s": 0.017643914557993412,
+  "stdout_stderr": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/agentx_sample/stage1/replay.log"
+}

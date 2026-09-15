@@ -1,0 +1,14 @@
+{
+  "total_gpu_capacity_bytes": 288400343040,
+  "total_kv_size_bytes": 63438356480,
+  "kv_size_per_token_bytes": 280885248,
+  "total_kv_size_tokens": 2284342,
+  "source": "native",
+  "memory_breakdown": {
+    "weights_bytes": 189461135360,
+    "activations_bytes": 1740059443,
+    "runtime_overhead_bytes": 4509715660,
+    "comm_overhead_bytes": 411041792
+  },
+  "tolerance_adjusted": null
+}

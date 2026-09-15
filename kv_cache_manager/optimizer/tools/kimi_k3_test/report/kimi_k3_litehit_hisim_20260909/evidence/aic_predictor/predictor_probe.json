@@ -1,0 +1,2732 @@
+{
+  "memory_fit_example": {
+    "available_kv_bytes_per_rank": 63438356480,
+    "fits": true,
+    "remaining_kv_bytes_per_rank": 45234618368,
+    "required_kv_bytes_per_rank": 18203738112
+  },
+  "probes": {
+    "decode_b1": {
+      "aggregation": {
+        "actual_new_tokens": 1,
+        "actual_past_tokens": 8192,
+        "causal_attention_work_ratio": 1.0,
+        "decode_attention_sequence_length": 8193,
+        "homogeneous": true,
+        "method": "aic_homogeneous_batch_ceil_mean",
+        "modeled_new_tokens": 1,
+        "modeled_past_tokens": 8192
+      },
+      "aic_runtime": {
+        "batch_size": 1,
+        "gen_seq_imbalance_correction_scale": 1.0,
+        "isl": 8192,
+        "mode": "static_gen",
+        "osl": 2,
+        "prefix": 0,
+        "seq_imbalance_correction_scale": 1.0,
+        "stride": 1
+      },
+      "latency_ms": 14.625880986289282,
+      "latency_s": 0.014625880986289282,
+      "per_op": [
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.0030023122580645164,
+          "moe_comm_fallback": null,
+          "name": "generation_embedding",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.005347519814968109,
+          "moe_comm_fallback": null,
+          "name": "generation_embedding_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.20763818322580646,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.0711253782113392,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_qkvg_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.6122494598055539,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_bfa_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.3649333417415619,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_fb_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.0,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_conv1d",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.46323838010430335,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_recurrent",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.20710256516129033,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_onorm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.4320320052405199,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_o_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.3689788672327995,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.07222197677419355,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.26572845001877865,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_downscale_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.1433991281885466,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_q_b_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.11733119487762453,
+          "moe_comm_fallback": null,
+          "name": "generation_bmm_pre",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.39710171846818415,
+          "moe_comm_fallback": null,
+          "name": "generation_attention",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.15425279438495634,
+          "moe_comm_fallback": null,
+          "name": "generation_bmm_post",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.15027200182278952,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_o_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.25358933210372925,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_gate_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.07203567483870968,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_gate_mul",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.1283404755592346,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.56058048,
+          "moe_comm_fallback": null,
+          "name": "generation_attn_res",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.27986016,
+          "moe_comm_fallback": null,
+          "name": "generation_ffn_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.01786770542910155,
+          "moe_comm_fallback": null,
+          "name": "generation_dense_gate_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.003004087741935484,
+          "moe_comm_fallback": null,
+          "name": "generation_dense_act_gate",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.012185345608491934,
+          "moe_comm_fallback": null,
+          "name": "generation_dense_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.005347519814968109,
+          "moe_comm_fallback": null,
+          "name": "generation_dense_ffn_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.7043906042005729,
+          "moe_comm_fallback": null,
+          "name": "generation_router_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.1286151177353327,
+          "moe_comm_fallback": null,
+          "name": "generation_latent_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.276425455483871,
+          "moe_comm_fallback": null,
+          "name": "generation_latent_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.48146176576614375,
+          "moe_comm_fallback": null,
+          "name": "generation_moe_pre_dispatch",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 2.835955257415771,
+          "moe_comm_fallback": null,
+          "name": "generation_moe",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.48146176576614375,
+          "moe_comm_fallback": null,
+          "name": "generation_moe_post_dispatch",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.9897564219103918,
+          "moe_comm_fallback": null,
+          "name": "generation_latent_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.7386168771319919,
+          "moe_comm_fallback": null,
+          "name": "generation_shared_gate_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.27606837677419355,
+          "moe_comm_fallback": null,
+          "name": "generation_shared_act_gate",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.29636265751388335,
+          "moe_comm_fallback": null,
+          "name": "generation_shared_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.04800062816353534,
+          "moe_comm_fallback": null,
+          "name": "generation_logits_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.0,
+          "moe_comm_fallback": null,
+          "name": "generation_p2p",
+          "source": "empirical"
+        }
+      ],
+      "requests": [
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        }
+      ],
+      "silicon_latency_fraction": 0.8661318744427434,
+      "source_latency_ms": {
+        "empirical": 1.9579392722580646,
+        "silicon": 12.667941714031217
+      }
+    },
+    "decode_b32": {
+      "aggregation": {
+        "actual_new_tokens": 32,
+        "actual_past_tokens": 262144,
+        "causal_attention_work_ratio": 1.0,
+        "decode_attention_sequence_length": 8193,
+        "homogeneous": true,
+        "method": "aic_homogeneous_batch_ceil_mean",
+        "modeled_new_tokens": 32,
+        "modeled_past_tokens": 262144
+      },
+      "aic_runtime": {
+        "batch_size": 32,
+        "gen_seq_imbalance_correction_scale": 1.0,
+        "isl": 8192,
+        "mode": "static_gen",
+        "osl": 2,
+        "prefix": 0,
+        "seq_imbalance_correction_scale": 1.0,
+        "stride": 1
+      },
+      "latency_ms": 30.064589018511395,
+      "latency_s": 0.030064589018511396,
+      "per_op": [
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.003073992258064516,
+          "moe_comm_fallback": null,
+          "name": "generation_embedding",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.010878160297870636,
+          "moe_comm_fallback": null,
+          "name": "generation_embedding_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.22742186322580646,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.0438319941361744,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_qkvg_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.6438898079920689,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_bfa_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.4114239911238352,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_fb_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.0,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_conv1d",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.7434336058795452,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_recurrent",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.21028208516129032,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_onorm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.5242773269613584,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_o_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.7505930605530738,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.07910325677419355,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.29017753952888975,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_downscale_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.142266570804004,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_q_b_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.15304319858551027,
+          "moe_comm_fallback": null,
+          "name": "generation_bmm_pre",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.704688826127676,
+          "moe_comm_fallback": null,
+          "name": "generation_attention",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.15436799526214598,
+          "moe_comm_fallback": null,
+          "name": "generation_bmm_post",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.18235733111699423,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_o_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.2573866645495097,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_gate_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.07314159483870968,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_gate_mul",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.26107584714889526,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.6405753599999999,
+          "moe_comm_fallback": null,
+          "name": "generation_attn_res",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.30652512,
+          "moe_comm_fallback": null,
+          "name": "generation_ffn_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.021051511366831525,
+          "moe_comm_fallback": null,
+          "name": "generation_dense_gate_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.003130807741935484,
+          "moe_comm_fallback": null,
+          "name": "generation_dense_act_gate",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.012958328567176046,
+          "moe_comm_fallback": null,
+          "name": "generation_dense_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.010878160297870636,
+          "moe_comm_fallback": null,
+          "name": "generation_dense_ffn_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.6141898940865913,
+          "moe_comm_fallback": null,
+          "name": "generation_router_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.1680319640371535,
+          "moe_comm_fallback": null,
+          "name": "generation_latent_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.289614575483871,
+          "moe_comm_fallback": null,
+          "name": "generation_latent_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.7524128091335295,
+          "moe_comm_fallback": null,
+          "name": "generation_moe_pre_dispatch",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 14.829458465576172,
+          "moe_comm_fallback": null,
+          "name": "generation_moe",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.7524128091335295,
+          "moe_comm_fallback": null,
+          "name": "generation_moe_post_dispatch",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.0209955804877813,
+          "moe_comm_fallback": null,
+          "name": "generation_latent_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.1250986655553181,
+          "moe_comm_fallback": null,
+          "name": "generation_shared_gate_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.27818805677419356,
+          "moe_comm_fallback": null,
+          "name": "generation_shared_act_gate",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.3249031288756265,
+          "moe_comm_fallback": null,
+          "name": "generation_shared_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.047449069068197944,
+          "moe_comm_fallback": null,
+          "name": "generation_logits_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.0,
+          "moe_comm_fallback": null,
+          "name": "generation_p2p",
+          "source": "empirical"
+        }
+      ],
+      "requests": [
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        }
+      ],
+      "silicon_latency_fraction": 0.9297826186495266,
+      "source_latency_ms": {
+        "empirical": 2.1110567122580646,
+        "silicon": 27.953532306253326
+      }
+    },
+    "decode_b8": {
+      "aggregation": {
+        "actual_new_tokens": 8,
+        "actual_past_tokens": 65536,
+        "causal_attention_work_ratio": 1.0,
+        "decode_attention_sequence_length": 8193,
+        "homogeneous": true,
+        "method": "aic_homogeneous_batch_ceil_mean",
+        "modeled_new_tokens": 8,
+        "modeled_past_tokens": 65536
+      },
+      "aic_runtime": {
+        "batch_size": 8,
+        "gen_seq_imbalance_correction_scale": 1.0,
+        "isl": 8192,
+        "mode": "static_gen",
+        "osl": 2,
+        "prefix": 0,
+        "seq_imbalance_correction_scale": 1.0,
+        "stride": 1
+      },
+      "latency_ms": 19.591808859492556,
+      "latency_s": 0.019591808859492556,
+      "per_op": [
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.003018498064516129,
+          "moe_comm_fallback": null,
+          "name": "generation_embedding",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.006850159764289856,
+          "moe_comm_fallback": null,
+          "name": "generation_embedding_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.21210546580645162,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.0439546902974446,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_qkvg_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.6091788124106409,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_bfa_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.3641359880566597,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_fb_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.0,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_conv1d",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.459264001250267,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_recurrent",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.2078205212903226,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_onorm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.4583439913888772,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_o_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.47266102373600005,
+          "moe_comm_fallback": null,
+          "name": "generation_kda_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.0737758141935484,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.27065227789884283,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_downscale_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.14359638652470513,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_q_b_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.11692800521850587,
+          "moe_comm_fallback": null,
+          "name": "generation_bmm_pre",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.4966608809503668,
+          "moe_comm_fallback": null,
+          "name": "generation_attention",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.15390720516443254,
+          "moe_comm_fallback": null,
+          "name": "generation_bmm_post",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.15942399700482687,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_o_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.23253333568572998,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_gate_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.07228539870967743,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_gate_mul",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.16440383434295655,
+          "moe_comm_fallback": null,
+          "name": "generation_mla_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.57864384,
+          "moe_comm_fallback": null,
+          "name": "generation_attn_res",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.28588128,
+          "moe_comm_fallback": null,
+          "name": "generation_ffn_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.017918392878523256,
+          "moe_comm_fallback": null,
+          "name": "generation_dense_gate_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.003032701935483871,
+          "moe_comm_fallback": null,
+          "name": "generation_dense_act_gate",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.011970929613129764,
+          "moe_comm_fallback": null,
+          "name": "generation_dense_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.006850159764289856,
+          "moe_comm_fallback": null,
+          "name": "generation_dense_ffn_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.7509605733240374,
+          "moe_comm_fallback": null,
+          "name": "generation_router_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.1138133605321248,
+          "moe_comm_fallback": null,
+          "name": "generation_latent_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.2794036438709677,
+          "moe_comm_fallback": null,
+          "name": "generation_latent_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.571555500626564,
+          "moe_comm_fallback": null,
+          "name": "generation_moe_pre_dispatch",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 7.350461559295654,
+          "moe_comm_fallback": null,
+          "name": "generation_moe",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.571555500626564,
+          "moe_comm_fallback": null,
+          "name": "generation_moe_post_dispatch",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.9599893126222823,
+          "moe_comm_fallback": null,
+          "name": "generation_latent_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.7526008884112041,
+          "moe_comm_fallback": null,
+          "name": "generation_shared_gate_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.2765470141935484,
+          "moe_comm_fallback": null,
+          "name": "generation_shared_act_gate",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.2926008891728189,
+          "moe_comm_fallback": null,
+          "name": "generation_shared_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.04652302486630026,
+          "moe_comm_fallback": null,
+          "name": "generation_logits_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.0,
+          "moe_comm_fallback": null,
+          "name": "generation_p2p",
+          "source": "empirical"
+        }
+      ],
+      "requests": [
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        },
+        {
+          "is_prefill": false,
+          "new_tokens": 1,
+          "past_kv_length": 8192
+        }
+      ],
+      "silicon_latency_fraction": 0.8982986107942191,
+      "source_latency_ms": {
+        "empirical": 1.9925141780645164,
+        "silicon": 17.599294681428038
+      }
+    },
+    "prefill_1k": {
+      "aggregation": {
+        "actual_new_tokens": 1024,
+        "actual_past_tokens": 0,
+        "causal_attention_work_ratio": 1.0,
+        "decode_attention_sequence_length": null,
+        "homogeneous": true,
+        "method": "aic_homogeneous_batch_ceil_mean",
+        "modeled_new_tokens": 1024,
+        "modeled_past_tokens": 0
+      },
+      "aic_runtime": {
+        "batch_size": 1,
+        "gen_seq_imbalance_correction_scale": 1.0,
+        "isl": 1024,
+        "mode": "static_ctx",
+        "osl": 1,
+        "prefix": 0,
+        "seq_imbalance_correction_scale": 1.0,
+        "stride": 1
+      },
+      "latency_ms": 87.90548053365808,
+      "latency_s": 0.08790548053365808,
+      "per_op": [
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.005367752258064517,
+          "moe_comm_fallback": null,
+          "name": "context_embedding",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.05224127948284149,
+          "moe_comm_fallback": null,
+          "name": "context_embedding_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.8604996232258064,
+          "moe_comm_fallback": null,
+          "name": "context_kda_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 2.8628560503323874,
+          "moe_comm_fallback": null,
+          "name": "context_kda_qkvg_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.5875597002881923,
+          "moe_comm_fallback": null,
+          "name": "context_kda_bfa_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.46085866292317706,
+          "moe_comm_fallback": null,
+          "name": "context_kda_fb_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.0633727744221686,
+          "moe_comm_fallback": null,
+          "name": "context_kda_conv1d",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 7.641446185112,
+          "moe_comm_fallback": null,
+          "name": "context_kda_scan",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.3120267251612904,
+          "moe_comm_fallback": null,
+          "name": "context_kda_onorm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.2010293106238048,
+          "moe_comm_fallback": null,
+          "name": "context_kda_o_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 3.6046482843160628,
+          "moe_comm_fallback": null,
+          "name": "context_kda_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.29930421677419355,
+          "moe_comm_fallback": null,
+          "name": "context_mla_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.5319177825578584,
+          "moe_comm_fallback": null,
+          "name": "context_mla_downscale_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.24341265106721632,
+          "moe_comm_fallback": null,
+          "name": "context_mla_q_b_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.28936533133188885,
+          "moe_comm_fallback": null,
+          "name": "context_mla_kv_b_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.6186816036701202,
+          "moe_comm_fallback": null,
+          "name": "context_attention",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.4177493254343668,
+          "moe_comm_fallback": null,
+          "name": "context_mla_o_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.4949119885762533,
+          "moe_comm_fallback": null,
+          "name": "context_mla_gate_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.10853103483870968,
+          "moe_comm_fallback": null,
+          "name": "context_mla_gate_mul",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.2537907075881958,
+          "moe_comm_fallback": null,
+          "name": "context_mla_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 3.20041152,
+          "moe_comm_fallback": null,
+          "name": "context_attn_res",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.15980384,
+          "moe_comm_fallback": null,
+          "name": "context_ffn_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.05427968661189586,
+          "moe_comm_fallback": null,
+          "name": "context_dense_gate_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.007185847741935484,
+          "moe_comm_fallback": null,
+          "name": "context_dense_act_gate",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.034187157768604634,
+          "moe_comm_fallback": null,
+          "name": "context_dense_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.05224127948284149,
+          "moe_comm_fallback": null,
+          "name": "context_dense_ffn_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.2523204242085,
+          "moe_comm_fallback": null,
+          "name": "context_router_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 3.431886116663615,
+          "moe_comm_fallback": null,
+          "name": "context_latent_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.7116664154838709,
+          "moe_comm_fallback": null,
+          "name": "context_latent_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 3.065572500228882,
+          "moe_comm_fallback": null,
+          "name": "context_moe_pre_dispatch",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 41.392050933837886,
+          "moe_comm_fallback": null,
+          "name": "context_moe",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 3.065572500228882,
+          "moe_comm_fallback": null,
+          "name": "context_moe_post_dispatch",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 3.5129280355241566,
+          "moe_comm_fallback": null,
+          "name": "context_latent_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.6088959508472018,
+          "moe_comm_fallback": null,
+          "name": "context_shared_gate_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.3460178167741936,
+          "moe_comm_fallback": null,
+          "name": "context_shared_act_gate",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.0528888901074727,
+          "moe_comm_fallback": null,
+          "name": "context_shared_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.04800062816353534,
+          "moe_comm_fallback": null,
+          "name": "context_logits_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.0,
+          "moe_comm_fallback": null,
+          "name": "context_p2p",
+          "source": "empirical"
+        }
+      ],
+      "requests": [
+        {
+          "is_prefill": true,
+          "new_tokens": 1024,
+          "past_kv_length": 0
+        }
+      ],
+      "silicon_latency_fraction": 0.9202459875118514,
+      "source_latency_ms": {
+        "empirical": 7.010814792258064,
+        "silicon": 80.8946657414
+      }
+    },
+    "prefill_8k": {
+      "aggregation": {
+        "actual_new_tokens": 8192,
+        "actual_past_tokens": 0,
+        "causal_attention_work_ratio": 1.0,
+        "decode_attention_sequence_length": null,
+        "homogeneous": true,
+        "method": "aic_homogeneous_batch_ceil_mean",
+        "modeled_new_tokens": 8192,
+        "modeled_past_tokens": 0
+      },
+      "aic_runtime": {
+        "batch_size": 1,
+        "gen_seq_imbalance_correction_scale": 1.0,
+        "isl": 8192,
+        "mode": "static_ctx",
+        "osl": 1,
+        "prefix": 0,
+        "seq_imbalance_correction_scale": 1.0,
+        "stride": 1
+      },
+      "latency_ms": 363.7890892582199,
+      "latency_s": 0.3637890892582199,
+      "per_op": [
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.021942018064516133,
+          "moe_comm_fallback": null,
+          "name": "context_embedding",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.3656655883789063,
+          "moe_comm_fallback": null,
+          "name": "context_embedding_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 5.434996985806452,
+          "moe_comm_fallback": null,
+          "name": "context_kda_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 20.557215849558514,
+          "moe_comm_fallback": null,
+          "name": "context_kda_qkvg_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 4.175175315796223,
+          "moe_comm_fallback": null,
+          "name": "context_kda_bfa_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.995869333545367,
+          "moe_comm_fallback": null,
+          "name": "context_kda_fb_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 4.218384093046189,
+          "moe_comm_fallback": null,
+          "name": "context_kda_conv1d",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 41.63073678016663,
+          "moe_comm_fallback": null,
+          "name": "context_kda_scan",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.0472138012903225,
+          "moe_comm_fallback": null,
+          "name": "context_kda_onorm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 6.064333399136862,
+          "moe_comm_fallback": null,
+          "name": "context_kda_o_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 25.230925598144534,
+          "moe_comm_fallback": null,
+          "name": "context_kda_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.8904337341935484,
+          "moe_comm_fallback": null,
+          "name": "context_mla_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 3.169382492293414,
+          "moe_comm_fallback": null,
+          "name": "context_mla_downscale_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.8837255588373252,
+          "moe_comm_fallback": null,
+          "name": "context_mla_q_b_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.6342613299687704,
+          "moe_comm_fallback": null,
+          "name": "context_mla_kv_b_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 5.409849643707275,
+          "moe_comm_fallback": null,
+          "name": "context_attention",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 2.109333356221517,
+          "moe_comm_fallback": null,
+          "name": "context_mla_o_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 2.603029410044352,
+          "moe_comm_fallback": null,
+          "name": "context_mla_gate_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.3642482787096774,
+          "moe_comm_fallback": null,
+          "name": "context_mla_gate_mul",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 8.77597412109375,
+          "moe_comm_fallback": null,
+          "name": "context_mla_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 21.69729216,
+          "moe_comm_fallback": null,
+          "name": "context_attn_res",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 7.325430720000001,
+          "moe_comm_fallback": null,
+          "name": "context_ffn_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.4030849541196479,
+          "moe_comm_fallback": null,
+          "name": "context_dense_gate_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.03648678193548387,
+          "moe_comm_fallback": null,
+          "name": "context_dense_act_gate",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.20311427414812125,
+          "moe_comm_fallback": null,
+          "name": "context_dense_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.3656655883789063,
+          "moe_comm_fallback": null,
+          "name": "context_dense_ffn_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 6.523203038685631,
+          "moe_comm_fallback": null,
+          "name": "context_router_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 23.852779600355362,
+          "moe_comm_fallback": null,
+          "name": "context_latent_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 3.7613313238709676,
+          "moe_comm_fallback": null,
+          "name": "context_latent_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 22.96598264694214,
+          "moe_comm_fallback": null,
+          "name": "context_moe_pre_dispatch",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 77.50880676269531,
+          "moe_comm_fallback": null,
+          "name": "context_moe",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 22.96598264694214,
+          "moe_comm_fallback": null,
+          "name": "context_moe_post_dispatch",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 22.927218861050076,
+          "moe_comm_fallback": null,
+          "name": "context_latent_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 11.015629980299208,
+          "moe_comm_fallback": null,
+          "name": "context_shared_gate_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.8361425341935483,
+          "moe_comm_fallback": null,
+          "name": "context_shared_act_gate",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 5.770240068435669,
+          "moe_comm_fallback": null,
+          "name": "context_shared_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.04800062816353534,
+          "moe_comm_fallback": null,
+          "name": "context_logits_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.0,
+          "moe_comm_fallback": null,
+          "name": "context_p2p",
+          "source": "empirical"
+        }
+      ],
+      "requests": [
+        {
+          "is_prefill": true,
+          "new_tokens": 8192,
+          "past_kv_length": 0
+        }
+      ],
+      "silicon_latency_fraction": 0.8834062933977721,
+      "source_latency_ms": {
+        "empirical": 42.41551833806452,
+        "silicon": 321.3735709201553
+      }
+    },
+    "prefill_cached_7k": {
+      "aggregation": {
+        "actual_new_tokens": 1024,
+        "actual_past_tokens": 7168,
+        "causal_attention_work_ratio": 1.0,
+        "decode_attention_sequence_length": null,
+        "homogeneous": true,
+        "method": "aic_homogeneous_batch_ceil_mean",
+        "modeled_new_tokens": 1024,
+        "modeled_past_tokens": 7168
+      },
+      "aic_runtime": {
+        "batch_size": 1,
+        "gen_seq_imbalance_correction_scale": 1.0,
+        "isl": 8192,
+        "mode": "static_ctx",
+        "osl": 1,
+        "prefix": 7168,
+        "seq_imbalance_correction_scale": 1.0,
+        "stride": 1
+      },
+      "latency_ms": 88.55473244023185,
+      "latency_s": 0.08855473244023185,
+      "per_op": [
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.005367752258064517,
+          "moe_comm_fallback": null,
+          "name": "context_embedding",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.05224127948284149,
+          "moe_comm_fallback": null,
+          "name": "context_embedding_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.8604996232258064,
+          "moe_comm_fallback": null,
+          "name": "context_kda_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 2.8628560503323874,
+          "moe_comm_fallback": null,
+          "name": "context_kda_qkvg_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.5875597002881923,
+          "moe_comm_fallback": null,
+          "name": "context_kda_bfa_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.46085866292317706,
+          "moe_comm_fallback": null,
+          "name": "context_kda_fb_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.0633727744221686,
+          "moe_comm_fallback": null,
+          "name": "context_kda_conv1d",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 7.641446185112,
+          "moe_comm_fallback": null,
+          "name": "context_kda_scan",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.3120267251612904,
+          "moe_comm_fallback": null,
+          "name": "context_kda_onorm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.2010293106238048,
+          "moe_comm_fallback": null,
+          "name": "context_kda_o_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 3.6046482843160628,
+          "moe_comm_fallback": null,
+          "name": "context_kda_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.29930421677419355,
+          "moe_comm_fallback": null,
+          "name": "context_mla_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.5319177825578584,
+          "moe_comm_fallback": null,
+          "name": "context_mla_downscale_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.24341265106721632,
+          "moe_comm_fallback": null,
+          "name": "context_mla_q_b_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.28936533133188885,
+          "moe_comm_fallback": null,
+          "name": "context_mla_kv_b_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.2679335102438927,
+          "moe_comm_fallback": null,
+          "name": "context_attention",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.4177493254343668,
+          "moe_comm_fallback": null,
+          "name": "context_mla_o_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.4949119885762533,
+          "moe_comm_fallback": null,
+          "name": "context_mla_gate_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.10853103483870968,
+          "moe_comm_fallback": null,
+          "name": "context_mla_gate_mul",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.2537907075881958,
+          "moe_comm_fallback": null,
+          "name": "context_mla_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 3.20041152,
+          "moe_comm_fallback": null,
+          "name": "context_attn_res",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.15980384,
+          "moe_comm_fallback": null,
+          "name": "context_ffn_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.05427968661189586,
+          "moe_comm_fallback": null,
+          "name": "context_dense_gate_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.007185847741935484,
+          "moe_comm_fallback": null,
+          "name": "context_dense_act_gate",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.034187157768604634,
+          "moe_comm_fallback": null,
+          "name": "context_dense_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.05224127948284149,
+          "moe_comm_fallback": null,
+          "name": "context_dense_ffn_ar",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.2523204242085,
+          "moe_comm_fallback": null,
+          "name": "context_router_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 3.431886116663615,
+          "moe_comm_fallback": null,
+          "name": "context_latent_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.7116664154838709,
+          "moe_comm_fallback": null,
+          "name": "context_latent_norm",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 3.065572500228882,
+          "moe_comm_fallback": null,
+          "name": "context_moe_pre_dispatch",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 41.392050933837886,
+          "moe_comm_fallback": null,
+          "name": "context_moe",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 3.065572500228882,
+          "moe_comm_fallback": null,
+          "name": "context_moe_post_dispatch",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 3.5129280355241566,
+          "moe_comm_fallback": null,
+          "name": "context_latent_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.6088959508472018,
+          "moe_comm_fallback": null,
+          "name": "context_shared_gate_up_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.3460178167741936,
+          "moe_comm_fallback": null,
+          "name": "context_shared_act_gate",
+          "source": "empirical"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 1.0528888901074727,
+          "moe_comm_fallback": null,
+          "name": "context_shared_down_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.04800062816353534,
+          "moe_comm_fallback": null,
+          "name": "context_logits_gemm",
+          "source": "silicon"
+        },
+        {
+          "energy_wms": 0.0,
+          "latency_ms": 0.0,
+          "moe_comm_fallback": null,
+          "name": "context_p2p",
+          "source": "empirical"
+        }
+      ],
+      "requests": [
+        {
+          "is_prefill": true,
+          "new_tokens": 1024,
+          "past_kv_length": 7168
+        }
+      ],
+      "silicon_latency_fraction": 0.9208307156594948,
+      "source_latency_ms": {
+        "empirical": 7.010814792258064,
+        "silicon": 81.54391764797377
+      }
+    }
+  },
+  "provenance": {
+    "admitted_table_sources": {
+      "computescale_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/computescale_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/quantize/sglang/0.5.14/computescale_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "context_attention_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/context_attention_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/attention/sglang/0.5.14/context_attention_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "context_mla_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/context_mla_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.14/context_mla_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "custom_allreduce_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/custom_allreduce_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.14/custom_allreduce_perf.parquet",
+          "version": "0.5.14"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.10/custom_allreduce_perf.parquet",
+          "version": "0.5.10"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.9/custom_allreduce_perf.parquet",
+          "version": "0.5.9"
+        }
+      ],
+      "dsa_context_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsa_context_module_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsa_context_module_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "dsa_generation_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsa_generation_module_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsa_generation_module_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "dsv4_csa_attn_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_csa_attn_module_perf.parquet",
+          "version": "0.5.16"
+        }
+      ],
+      "dsv4_csa_context_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_csa_context_module_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_csa_context_module_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "dsv4_csa_generation_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_csa_generation_module_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_csa_generation_module_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "dsv4_csa_topk_calib_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_csa_topk_calib_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_csa_topk_calib_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "dsv4_hca_attn_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_hca_attn_module_perf.parquet",
+          "version": "0.5.16"
+        }
+      ],
+      "dsv4_hca_context_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_hca_context_module_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_hca_context_module_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "dsv4_hca_generation_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_hca_generation_module_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_hca_generation_module_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "dsv4_megamoe_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_megamoe_module_perf.parquet",
+          "version": "0.5.16"
+        }
+      ],
+      "dsv4_paged_mqa_logits_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/dsv4_paged_mqa_logits_module_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_paged_mqa_logits_module_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "encoder_attention_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/encoder_attention_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/encoder_attention/sglang/0.5.14/encoder_attention_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "fpm_forward_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/fpm_forward_perf.parquet",
+          "version": "0.5.16"
+        }
+      ],
+      "gdn_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/gdn_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/sglang/0.5.14/gdn_perf.parquet",
+          "version": "0.5.14"
+        },
+        {
+          "channel": "cross_backend",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/trtllm/1.3.0rc20/gdn_perf.parquet",
+          "version": "1.3.0rc20"
+        },
+        {
+          "channel": "cross_backend",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/vllm/0.24.0/gdn_perf.parquet",
+          "version": "0.24.0"
+        }
+      ],
+      "gemm_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/gemm_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/gemm/sglang/0.5.14/gemm_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "generation_attention_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/generation_attention_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/attention/sglang/0.5.14/generation_attention_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "generation_mla_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/generation_mla_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.14/generation_mla_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "kda_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/kda/sglang/0.5.16/kda_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "cross_backend",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/kda/vllm/0.1.dev19262/kda_perf.parquet",
+          "version": "0.1.dev19262"
+        }
+      ],
+      "mamba2_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/mamba2_perf.parquet",
+          "version": "0.5.16"
+        }
+      ],
+      "mhc_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/mhc_module_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mhc/sglang/0.5.14/mhc_module_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "mla_bmm_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/mla_bmm_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla_bmm/sglang/0.5.14/mla_bmm_perf.parquet",
+          "version": "0.5.14"
+        },
+        {
+          "channel": "cross_backend",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla_bmm/trtllm/1.3.0rc20/mla_bmm_perf.parquet",
+          "version": "1.3.0rc20"
+        }
+      ],
+      "mla_context_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/mla_context_module_perf.parquet",
+          "version": "0.5.16"
+        }
+      ],
+      "mla_generation_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/mla_generation_module_perf.parquet",
+          "version": "0.5.16"
+        }
+      ],
+      "moe_a2a_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/moe_a2a_perf.parquet",
+          "version": "0.5.16"
+        }
+      ],
+      "moe_expert_compute_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/moe_expert_compute_perf.parquet",
+          "version": "0.5.16"
+        }
+      ],
+      "moe_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/moe_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.14/moe_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "msa_context_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/msa/sglang/0.5.16/msa_context_module_perf.parquet",
+          "version": "0.5.16"
+        }
+      ],
+      "msa_generation_module_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/msa/sglang/0.5.16/msa_generation_module_perf.parquet",
+          "version": "0.5.16"
+        }
+      ],
+      "nccl_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/nccl_perf.parquet",
+          "version": "0.5.16"
+        }
+      ],
+      "oneccl_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/oneccl_perf.parquet",
+          "version": "0.5.16"
+        }
+      ],
+      "scale_matrix_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/scale_matrix_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/quantize/sglang/0.5.14/scale_matrix_perf.parquet",
+          "version": "0.5.14"
+        }
+      ],
+      "trtllm_alltoall_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/trtllm_alltoall_perf.parquet",
+          "version": "0.5.16"
+        }
+      ],
+      "wideep_context_mla_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/wideep_context_mla_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.10/wideep_context_mla_perf.parquet",
+          "version": "0.5.10"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.9/wideep_context_mla_perf.parquet",
+          "version": "0.5.9"
+        }
+      ],
+      "wideep_context_moe_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/wideep_context_moe_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.10/wideep_context_moe_perf.parquet",
+          "version": "0.5.10"
+        }
+      ],
+      "wideep_deepep_ll_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/wideep_deepep_ll_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.12/wideep_deepep_ll_perf.parquet",
+          "version": "0.5.12"
+        }
+      ],
+      "wideep_deepep_normal_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/wideep_deepep_normal_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.12/wideep_deepep_normal_perf.parquet",
+          "version": "0.5.12"
+        }
+      ],
+      "wideep_generation_mla_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/wideep_generation_mla_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.10/wideep_generation_mla_perf.parquet",
+          "version": "0.5.10"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.9/wideep_generation_mla_perf.parquet",
+          "version": "0.5.9"
+        }
+      ],
+      "wideep_generation_moe_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/wideep_generation_moe_perf.parquet",
+          "version": "0.5.16"
+        },
+        {
+          "channel": "fallback",
+          "exists": true,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.10/wideep_generation_moe_perf.parquet",
+          "version": "0.5.10"
+        }
+      ],
+      "wideep_moe_perf.parquet": [
+        {
+          "channel": "primary",
+          "exists": false,
+          "path": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sglang/0.5.16/wideep_moe_perf.parquet",
+          "version": "0.5.16"
+        }
+      ]
+    },
+    "aic_git_commit": "ec215200d05cf6899d0d472b75ceafa6b53c432f",
+    "aic_git_status": "",
+    "aic_source_root": "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync",
+    "backend": "sglang",
+    "backend_version": "0.5.16",
+    "database_mode": "SILICON",
+    "engine_config": {
+      "attention_dp_size": 1,
+      "fmha_quant_mode": "bfloat16",
+      "gemm_quant_mode": "fp8",
+      "kvcache_quant_mode": "bfloat16",
+      "moe_ep_size": 8,
+      "moe_quant_mode": "w4a8_mxfp4_mxfp8",
+      "moe_tp_size": 1,
+      "nextn": 0,
+      "pp_size": 1,
+      "tp_size": 8
+    },
+    "engine_spec_sha256": "59fa4ca5a6c663864a6934cd9a102156afc3b0a671322ec7ecd5450174a0ea33",
+    "limitations": [
+      "CPU operation-level simulation; no GPU serving measurements were collected by this workflow.",
+      "AIC SILICON queries include built-in empirical elementwise/normalization/AttnRes operations; silicon tags may include interpolation or extrapolation.",
+      "SGLang 0.5.16 KDA data are required; Rust ANALYTICAL mode does not implement KDA in this checkout.",
+      "Heterogeneous lengths use the standard homogeneous AIC API with ceil means; prefill uses its exact causal-work imbalance ratio. Decode uses ceil mean past plus one current token.",
+      "Table-source records describe admitted priority-ordered files, not the selected row for every interpolated query.",
+      "AIC uses its configured power_law expert-routing distribution; synthetic traces do not supply measured expert routing.",
+      "No speculative model, no latency correction fit, no communication/compute overlap added by this adapter.",
+      "Memory is per rank. G1 tokens and KDA active/checkpoint/staging state slots must be budgeted explicitly by the scheduler."
+    ],
+    "memory_profile": {
+      "activations_bytes": 1740059443,
+      "aic_native_state_slots_per_request": 5,
+      "comm_overhead_bytes": 411041792,
+      "gpu_capacity_bytes": 288400343040,
+      "kda_conv_bytes_per_slot_per_rank": 1907712,
+      "kda_ssm_bytes_per_slot_per_rank": 54263808,
+      "kda_state_bytes_per_slot_per_rank": 56171520,
+      "kv_budget_bytes": 63438356480,
+      "max_batch_size": 32,
+      "max_num_tokens": 8192,
+      "memory_fraction_of_total": 0.9,
+      "mla_kv_bytes_per_token_per_rank": 27648,
+      "rank_count": 8,
+      "runtime_overhead_bytes": 4509715660,
+      "scheduler_state_slots_per_request": "explicit caller input; not inferred from AIC five-slot proxy",
+      "source": "AIC native weights and reservations; explicit physical hybrid state geometry",
+      "weights_bytes": 189461135360
+    },
+    "model": "moonshotai/Kimi-K3",
+    "modeled_source_latency_ms_across_queries": {
+      "empirical": 62.4986580851613,
+      "silicon": 542.0329230112417
+    },
+    "queries": 6,
+    "source_sha256": {
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/_aiconfigurator_core.abi3.so": "2c859fea897e2f8a66bc30ea781f8520a34ad6aad40cc910db22323e64436137",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/model_configs/moonshotai--Kimi-K3_config.json": "9710e121a58d03ac92c8d6da287a19541994319afbbe6d6202af001ffd379213",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/sdk/backends/base_backend.py": "3171bee35dbde65d0828c9ff1e67ea652fb4af29514768ae403cbbe4e9dd0683",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/sdk/engine.py": "2f029d98b740e785be3798a2cde0ded49966387f3ce4dd9191e13bb01e83439c",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/sdk/memory.py": "54f6dd08bc8a0e2edb631ccbe1dab1cd2142ce65cbdf67b653fba1b3fcee23be",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/sdk/models/kimi_k3.py": "27f8a42afc87d422b4bfddab6641f8301b9342926c9fa2a460fba37610bf2bdb",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/b300_sxm.yaml": "962a61b1e0458a2fbda2a6875b78db8cf9f51714bed314247302b46caa959f31",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/attention/sglang/0.5.14/collection_meta.yaml": "e8fa7dfc0c865ece82becbf696223b1d3909cb84e98e1acbe6a1d06aeaf7c247",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/attention/sglang/0.5.14/context_attention_perf.parquet": "da62cdb3431878bff65bb26fe1493a2e6c857437d005b7778a24288e94fe15e3",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/attention/sglang/0.5.14/generation_attention_perf.parquet": "588f01da4ceaacd8979ef15d2e535cd6f926266f161cece8f05442c8a67cdb68",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.10/collection_meta.yaml": "1f539fa280fe89953c6ce7d5655691702e8572e2f33f9ab7a6c34b34ac4993e9",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.10/custom_allreduce_perf.parquet": "0751d107a8e2c54df14558b94585624b0de5e09f1ce0356f8132ab0a1e2a7f2d",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.12/collection_meta.yaml": "1fbcb155d7b0b7388896334bc347a9ded8b1065d1a8502673e1e5852072886f0",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.12/wideep_deepep_ll_perf.parquet": "a30b3fd3c656d975350f5d4bee66ec3f3372012620c7cc6cf8627fde41094fda",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.12/wideep_deepep_normal_perf.parquet": "181453bd67a8f8c8cd1d1664b434845897e9b40802eb851a868068b759b85b33",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.14/collection_meta.yaml": "7fde4cb955fb23b33c1dcb52528f19ea87c1b312cbb57c32093530fc9db6a1d9",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.14/custom_allreduce_perf.parquet": "fda78312580ed4045af875f90500d3292235ea00552ec62cd56e0a1492aa2cea",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.9/collection_meta.yaml": "afa1efd375d2c9d0f1db64e375505ec3a5559e01d531875c11d6155ec4ecf151",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/comm/sglang/0.5.9/custom_allreduce_perf.parquet": "f725994d03729449e002b21f48aafcc20d9b2eeba38ebcf095850999356a2031",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/encoder_attention/sglang/0.5.14/collection_meta.yaml": "9f542e6b801e8c10b81b5133cd8fb6c03b926de6896d1cfc2320a87442c76d49",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/encoder_attention/sglang/0.5.14/encoder_attention_perf.parquet": "9175b22129bd1225b909a58ce7104eb6bb9bd6e13be2bd3e933f931db42098a4",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/gemm/sglang/0.5.14/collection_meta.yaml": "27cea70ce1c98d20a0e38cc32ded1357d6ddacd204e5bf8519f40f732a203e94",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/gemm/sglang/0.5.14/gemm_perf.parquet": "54d5ab40ff8e405c786fd7a6034345c29d865df6df4d2911a267dee731443726",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/kda/sglang/0.5.16/collection_meta.yaml": "f09dc10a7fe65a6b17b0ea5efedf7776b4dcd813d28a068554d09af642fdfd26",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/kda/sglang/0.5.16/kda_perf.parquet": "7f07a09594dce2e5cb788b68dc25a9dd3dac00f6189c292d485943ef6ad44307",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/kda/vllm/0.1.dev19262/collection_meta.yaml": "b087ccb4638ea6705d924e5655543ceee3e6f6481dd3b5a68163e8fcceec5075",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/kda/vllm/0.1.dev19262/kda_perf.parquet": "ee2da9c94b72793ced99f8a5e1bc8c6df09e9706317ea2b6f9050d47d2d54929",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/sglang/0.5.14/collection_meta.yaml": "f3aea56d17116582bd149e08a1b63d467265a91780c19e27aadf57dc1a116d08",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/sglang/0.5.14/gdn_perf.parquet": "2715b6d08c00deb59872eebfd245a6791ac940104c728cf74f038b8809f134dd",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/trtllm/1.3.0rc20/collection_meta.yaml": "ee478037a14c79743750e176eb31f018ed1b1d78b17d69d72a873f36c01a66b3",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/trtllm/1.3.0rc20/gdn_perf.parquet": "77c0a3b1032b04b5b77f25ca2950df546ddc5e2ff99aeffae6d149ca25cd99d2",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/vllm/0.24.0/collection_meta.yaml": "fda70302af3ed3f9fc9da29199cf89eb0bd4bb4bf5dafc99b20e97a35ea92603",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/linear_attention/vllm/0.24.0/gdn_perf.parquet": "860383a4df6818ec4dc353d7a9d0698fce6eb3c4bc3c12f83bb8261ae7d240c7",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mhc/sglang/0.5.14/collection_meta.yaml": "dec37320b12b1291cec5ce085409a4f3fa8960f77a6361bff4e2ee9fad6760bc",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mhc/sglang/0.5.14/mhc_module_perf.parquet": "32bb3438115ac81d812cc860fef442830bba06d341059dba93d179e4fe934484",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.10/collection_meta.yaml": "02fcc55c088c770911334bc9aa274fa6ade733d6aaa1f360e8ac10bd6eded099",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.10/wideep_context_mla_perf.parquet": "073e56726ccac844ef3a98bc51ad97c48eac80406c48a0773f2389427c64a56a",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.10/wideep_generation_mla_perf.parquet": "b0c63fe5cfa9a496e782215d7767811080946d5d388a44aab78cb2200f59cf9b",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.14/collection_meta.yaml": "7db79d7880f1939687a50be5b488c798cde7a45734464997e298ebefefeec7cd",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.14/context_mla_perf.parquet": "ea217601adf3c847fe2b35cf7fbbae790b81e8d66e42b0d63c64552d6512faf2",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.14/generation_mla_perf.parquet": "12070ef29a3d074644518b970b5c5e7b8ef6bae773f2d7db2c13a5668172f6a6",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.9/collection_meta.yaml": "ebfdd8e8e85b206b58ff1c45417cddabed915640682be2f13966036e01d6c218",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.9/wideep_context_mla_perf.parquet": "a0721292c17c99b26ac7ab88efeeb6ceee0eb7767fcd1c8df4c7f22518895056",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla/sglang/0.5.9/wideep_generation_mla_perf.parquet": "114c23cf6353be10f7791e9a723e200b8fdc29d111c3151a50ab32091a2ebd36",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla_bmm/sglang/0.5.14/collection_meta.yaml": "a250c933eb64dda6a63c13d44be6ffe84af5b7ad4998bba7c8eeacb941961b24",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla_bmm/sglang/0.5.14/mla_bmm_perf.parquet": "f5978e6a0ed03fd3e36262e02d76c75a5d8e40c7f6f1ce7edaf82c75cb0825ae",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla_bmm/trtllm/1.3.0rc20/collection_meta.yaml": "d54d5b72cd6ac5c15e373a9ba936792157c001cfac71d8805b1b914b2af40168",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/mla_bmm/trtllm/1.3.0rc20/mla_bmm_perf.parquet": "995f64ce84fc4fbc092a96687bc5656ee647f29797cdf3385d10f59293eeabae",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.10/collection_meta.yaml": "80973da827d710967492ad968972d176eff8581253a99f6dd276e6c018f55429",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.10/wideep_context_moe_perf.parquet": "b56aacc1df0f3c693532d40913c8667c590958f0594ccb3af22890d3a7e3d17e",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.10/wideep_generation_moe_perf.parquet": "105e3383d41bad25b02b576833016521b5122ec1571b4906b30040e3e8c83b27",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.14/collection_meta.yaml": "96ba16f76fdb67e5edefbcf9d3ba41a955d4a234b49995c72e45da1329d5ee50",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/moe/sglang/0.5.14/moe_perf.parquet": "e51de901466beeca9c7bf805edcbf79f3ddbf2f6b2f09f0a1e7baf372e3902de",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/msa/sglang/0.5.16/collection_meta.yaml": "ead769821cae40f29aa57e4914f9fb612a194786421aeb8dc3d5b46e82a0ecab",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/msa/sglang/0.5.16/msa_context_module_perf.parquet": "77fca10d613df069fb92153ff8b04ad4ca2b5172412af19a8c20ba0a8b81d907",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/msa/sglang/0.5.16/msa_generation_module_perf.parquet": "64b84a03bf1b348bd2d7e3f2144f36c0879fbc9f16ce1f021ff72a318ec7452d",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/quantize/sglang/0.5.14/collection_meta.yaml": "44de68e9b62661264b1b4f53773c8b228290652cb2e2bfa99e19c91cd12dfa08",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/quantize/sglang/0.5.14/computescale_perf.parquet": "fbfb00c6e8c954baeb8f88589365203fc6fa99b039aa714ea16c392567fb1268",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/quantize/sglang/0.5.14/scale_matrix_perf.parquet": "0cab5f21092e3d3aad5650028ca5ae15a3187b0258994c93b1f3eb059cc2676c",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/collection_meta.yaml": "158ed84a685dbb6c0094d79074ced5bf924352ed7de5698743442bb482659c5b",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsa_context_module_perf.parquet": "ad8cf57a1a44e9a2bb0a56a957c7441257b5ae2a89fb9c52608a768702ba3cf3",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsa_generation_module_perf.parquet": "2976cb819bba29e0ec2a367b8311a509205fd05282c255c1549c8f4ca3e16dfe",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_csa_context_module_perf.parquet": "c3b531a3d55bb279710c1dbb14a9a964673e195922c84a689b99bfd11741b5e7",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_csa_generation_module_perf.parquet": "135e5dbc1eeb073c8dd0dfda67e7173bad312ede22eba85466f20c5433603b61",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_csa_topk_calib_perf.parquet": "6f79cb05126f587743b63057755357c91868671c92694ecdfe9e6e7460afb949",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_hca_context_module_perf.parquet": "f8f46c545759f50e443acf7894ad585a98dfe50777d14662119f97cc866e20a7",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_hca_generation_module_perf.parquet": "87256fdbf8e287fd2c994f16376b86cc03645b1b17380b104ef8b2344d3c6b74",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/data/b300_sxm/sparse_attention/sglang/0.5.14/dsv4_paged_mqa_logits_module_perf.parquet": "b2930c02b5e35362f3ac2d20aaeb72ed2da3a97da006401a701e0a96e24d8cbf",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/aic-core/src/aiconfigurator_core/systems/query_versions.yaml": "2632da0919d716f76928374e3a419bfa3fe7dc639074c925b02b40ccdad98158",
+      "/workspace/dynosim_aic_sweep/aiconfigurator_analytical_sync/pyproject.toml": "10d9d71c9e350d29749d2127b7076a063e145068d178e58fc6df12f708bdd646",
+      "/workspace/tair-kvcache/hisim/src/hisim/time_predictor/kimi_k3.py": "0d867e0856eb7e2b98fe6c9c8ab4e3ef303c9c64c5a29739cc0ee2f6ffd004bf"
+    },
+    "system": "b300_sxm",
+    "unique_query_shapes": 6
+  }
+}

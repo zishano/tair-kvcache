@@ -1,0 +1,364 @@
+{
+  "trace_file_path": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/kv_cache_manager/optimizer/tools/kimi_k3_test/output/capacity_curve_only_tp32/trace.jsonl",
+  "output_result_path": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/kv_cache_manager/optimizer/tools/kimi_k3_test/output/capacity_curve_only_tp32/stage1",
+  "block_size": 64,
+  "pipeline_worker_count": 1,
+  "reserve_last_token": true,
+  "instance_groups": [
+    {
+      "name": "kimi-k3-bundles",
+      "capacity_gb": [
+        1
+      ],
+      "eviction_policy": "lru",
+      "ttl_seconds": 0,
+      "enable_prefix_hash": false
+    }
+  ],
+  "instances": [
+    {
+      "instance_group_name": "kimi-k3-bundles",
+      "instance_id": "kimi-k3.tp32.checkpoint1024",
+      "block_size": 1024,
+      "linear_step": 1,
+      "location_spec_infos": [
+        {
+          "name": "mla.tp0",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp0",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp1",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp1",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp2",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp2",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp3",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp3",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp4",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp4",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp5",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp5",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp6",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp6",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp7",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp7",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp8",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp8",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp9",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp9",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp10",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp10",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp11",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp11",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp12",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp12",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp13",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp13",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp14",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp14",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp15",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp15",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp16",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp16",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp17",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp17",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp18",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp18",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp19",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp19",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp20",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp20",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp21",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp21",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp22",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp22",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp23",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp23",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp24",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp24",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp25",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp25",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp26",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp26",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp27",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp27",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp28",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp28",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp29",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp29",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp30",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp30",
+          "size": 14042880
+        },
+        {
+          "name": "mla.tp31",
+          "size": 28311552
+        },
+        {
+          "name": "kda.tp31",
+          "size": 14042880
+        }
+      ],
+      "location_spec_groups": [
+        {
+          "name": "full",
+          "spec_names": [
+            "mla.tp0",
+            "mla.tp1",
+            "mla.tp2",
+            "mla.tp3",
+            "mla.tp4",
+            "mla.tp5",
+            "mla.tp6",
+            "mla.tp7",
+            "mla.tp8",
+            "mla.tp9",
+            "mla.tp10",
+            "mla.tp11",
+            "mla.tp12",
+            "mla.tp13",
+            "mla.tp14",
+            "mla.tp15",
+            "mla.tp16",
+            "mla.tp17",
+            "mla.tp18",
+            "mla.tp19",
+            "mla.tp20",
+            "mla.tp21",
+            "mla.tp22",
+            "mla.tp23",
+            "mla.tp24",
+            "mla.tp25",
+            "mla.tp26",
+            "mla.tp27",
+            "mla.tp28",
+            "mla.tp29",
+            "mla.tp30",
+            "mla.tp31"
+          ]
+        },
+        {
+          "name": "linear",
+          "spec_names": [
+            "kda.tp0",
+            "kda.tp1",
+            "kda.tp2",
+            "kda.tp3",
+            "kda.tp4",
+            "kda.tp5",
+            "kda.tp6",
+            "kda.tp7",
+            "kda.tp8",
+            "kda.tp9",
+            "kda.tp10",
+            "kda.tp11",
+            "kda.tp12",
+            "kda.tp13",
+            "kda.tp14",
+            "kda.tp15",
+            "kda.tp16",
+            "kda.tp17",
+            "kda.tp18",
+            "kda.tp19",
+            "kda.tp20",
+            "kda.tp21",
+            "kda.tp22",
+            "kda.tp23",
+            "kda.tp24",
+            "kda.tp25",
+            "kda.tp26",
+            "kda.tp27",
+            "kda.tp28",
+            "kda.tp29",
+            "kda.tp30",
+            "kda.tp31"
+          ]
+        }
+      ],
+      "optimizer_state_info": {
+        "full_location_spec_group_name": "full",
+        "linear_location_spec_group_name": "linear"
+      }
+    }
+  ]
+}

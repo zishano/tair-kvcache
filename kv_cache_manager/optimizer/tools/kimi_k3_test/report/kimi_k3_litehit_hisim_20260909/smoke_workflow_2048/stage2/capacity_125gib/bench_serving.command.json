@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/workspace/tair-kvcache/.venv/bin/python",
+    "-m",
+    "hisim.simulation.bench_serving",
+    "--hybrid-checkpoint-config",
+    "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/smoke_workflow_2048/stage2/configs/capacity_125gib.json"
+  ],
+  "cwd": "/workspace/tair-kvcache",
+  "returncode": 0,
+  "elapsed_wall_s": 10.217272563837469,
+  "stdout_stderr": "/workspace/dynosim_aic_sweep/reports/kimi_k3_litehit_hisim_20260909/smoke_workflow_2048/stage2/capacity_125gib/bench_serving.log"
+}

@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/bazel-bin/kv_cache_manager/optimizer/lite_hit_main",
+    "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/kv_cache_manager/optimizer/tools/kimi_k3_test/output/capacity_curve_relaxed/litehit_config.json"
+  ],
+  "cwd": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache",
+  "returncode": 0,
+  "elapsed_wall_s": 0.03818221390247345,
+  "stdout_stderr": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/kv_cache_manager/optimizer/tools/kimi_k3_test/output/capacity_curve_relaxed/stage1/replay.log"
+}
