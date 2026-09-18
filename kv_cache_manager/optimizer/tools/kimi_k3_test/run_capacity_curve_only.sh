@@ -9,19 +9,32 @@ REPO="${K3_REPO:-$(cd -- "$SCRIPT_DIR/../../../.." && pwd)}"
 PYTHON="${K3_PY:-$REPO/.venv/bin/python}"
 WORKFLOW="${K3_WORKFLOW:-$SCRIPT_DIR/run_workflow_curve_only.py}"
 MODEL="${K3_MODEL:-$SCRIPT_DIR/config/moonshotai--Kimi-K3_config.json}"
+# TRACE="${K3_TRACE:-$SCRIPT_DIR/trace/merged.jsonl}"
 # TRACE="${K3_TRACE:-$SCRIPT_DIR/trace/traces.jsonl}"
-TRACE="${K3_TRACE:-$SCRIPT_DIR/trace_local/merged.jsonl}"
+# OUTPUT="${K3_RUN:-$SCRIPT_DIR/output/capacity_curve_only}"
+# TRACE="${K3_TRACE:-$SCRIPT_DIR/trace_local/merged.jsonl}"
 # TRACE="${K3_TRACE:-$SCRIPT_DIR/test/merged.jsonl}"
-OUTPUT="${K3_RUN:-$SCRIPT_DIR/output/capacity_curve_only_tp32}"
+# TRACE="${K3_TRACE:-$SCRIPT_DIR/trace_60agent/traces.jsonl}"
+# OUTPUT="${K3_RUN:-$SCRIPT_DIR/output/capacity_curve_only_60agent}"
+TRACE="${K3_TRACE:-$SCRIPT_DIR/trace_main1/9f148b4f-e71.json}"
+OUTPUT="${K3_RUN:-$SCRIPT_DIR/output/capacity_curve_only_main1}"
 
-# === Trace 采样参数 ===
-SESSIONS="${AGENTX_SESSIONS:-8}" # 从 AgentX trace 中选择多少个 session（对话）进行分析
-REQUESTS_PER_SESSION="${REQUESTS_PER_SESSION:-24}" # 每个 session 最多保留多少个请求
-WINDOW_SECONDS="${AGENTX_WINDOW_SECONDS:-3600}" # 时间窗口（秒）：只选择 session 开始后此时间内的请求
-MAX_INPUT="${MAX_INPUT_TOKENS:-262144}" # 输入 token 上限：超过此值的请求会被过滤）
+# === Trace 采样参数（已设置为不限制，处理整条trace的所有请求）===
+SESSIONS="${AGENTX_SESSIONS:-999999}" # 从 AgentX trace 中选择多少个 session（对话）进行分析
+REQUESTS_PER_SESSION="${REQUESTS_PER_SESSION:-999999999}" # 每个 session 最多保留多少个请求
+WINDOW_SECONDS="${AGENTX_WINDOW_SECONDS:-999999999}" # 时间窗口（秒）：只选择 session 开始后此时间内的请求
+MAX_INPUT="${MAX_INPUT_TOKENS:-999999999}" # 输入 token 上限：超过此值的请求会被过滤）
 TIME_SCALE="${TIME_SCALE:-10}" # 时间压缩比例：将原始到达时间缩放，用于加速仿真
 TP_SIZE="${TP_SIZE:-32}" # Tensor Parallel 大小：模型分片数量
 CHECKPOINT="${CHECKPOINT_TOKENS:-1024}" # Checkpoint 间隔（tokens）：每隔多少 tokens 生成一个 KV cache checkpoint
+
+# SESSIONS="${AGENTX_SESSIONS:-8}" # 从 AgentX trace 中选择多少个 session（对话）进行分析
+# REQUESTS_PER_SESSION="${REQUESTS_PER_SESSION:-24}" # 每个 session 最多保留多少个请求
+# WINDOW_SECONDS="${AGENTX_WINDOW_SECONDS:-3600}" # 时间窗口（秒）：只选择 session 开始后此时间内的请求
+# MAX_INPUT="${MAX_INPUT_TOKENS:-262144}" # 输入 token 上限：超过此值的请求会被过滤）
+# TIME_SCALE="${TIME_SCALE:-10}" # 时间压缩比例：将原始到达时间缩放，用于加速仿真
+# TP_SIZE="${TP_SIZE:-8}" # Tensor Parallel 大小：模型分片数量
+# CHECKPOINT="${CHECKPOINT_TOKENS:-1024}" # Checkpoint 间隔（tokens）：每隔多少 tokens 生成一个 KV cache checkpoint
 
 if [[ ! -x "$PYTHON" ]]; then
   printf '[ERROR] Python executable not found: %s\n' "$PYTHON" >&2

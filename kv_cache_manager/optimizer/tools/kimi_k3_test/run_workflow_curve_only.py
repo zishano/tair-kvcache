@@ -336,7 +336,9 @@ def prepare(args) -> None:
         "unique_bundles": len(unique_bundles),
         "unbounded_resident_payload_gib": len(unique_bundles) * layout["bundle_bytes"] / GIB,
     })
+    unbounded_gib = len(unique_bundles) * layout["bundle_bytes"] / GIB
     print(f"Prepared {len(prepared)} requests; bundle={layout['bundle_bytes'] / (1 << 20):.3f} MiB over TP{args.tp_size}")
+    print(f"Unique bundles: {len(unique_bundles):,}; unbounded capacity: {unbounded_gib:,.2f} GiB ({unbounded_gib/1024:.2f} TiB)")
 
 
 def scan(args) -> None:
@@ -351,7 +353,24 @@ def scan(args) -> None:
     facts = phase / "litehit_facts.csv"
     replay = run_command([str(binary_dir / "lite_hit_main"), str(out / "litehit_config.json")], phase, "replay")
 
-    capacities = sorted(set([0.0, 50.0, 1024.0] + [float(value) for value in range(25, 1025, 25)])) + [-1.0]
+    # Dynamically determine capacity range based on unbounded capacity
+    unbounded_gib = manifest.get("unbounded_resident_payload_gib", 1024.0)
+    max_capacity = max(1024.0, min(unbounded_gib * 1.1, 102400.0))  # Up to 100 TB max, 10% above unbounded
+
+    # Generate capacity points: fine-grained up to 1024 GiB, then coarser for larger ranges
+    if max_capacity <= 1024.0:
+        # Original range for small datasets
+        capacities = sorted(set([0.0, 50.0, 1024.0] + [float(value) for value in range(25, 1025, 25)]))
+    else:
+        # Extended range for large datasets
+        capacities = sorted(set(
+            [0.0, 50.0] +
+            [float(value) for value in range(25, 1025, 25)] +  # 25-1024 GiB, step 25
+            [float(value) for value in range(1100, int(min(5000, max_capacity)), 100)] +  # 1100-5000 GiB, step 100
+            [float(value) for value in range(5000, int(max_capacity) + 1, 500)] +  # 5000-max GiB, step 500
+            [max_capacity]
+        ))
+    capacities = capacities + [-1.0]  # -1.0 means infinite capacity
     query_path = phase / "capacity_query.jsonl"
     query = run_command(
         [str(binary_dir / "lite_hit_facts_query_main"), str(facts), str(query_path)] + [str(capacity) for capacity in capacities],

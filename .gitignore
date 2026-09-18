@@ -21,4 +21,5 @@ stub_source
 kv_cache_manager/optimizer/tools/kimi_k3_test/output/*
 kv_cache_manager/optimizer/tools/kimi_k3_test/report/*
 kv_cache_manager/optimizer/tools/kimi_k3_test/trace/*
-kv_cache_manager/optimizer/tools/kimi_k3_test/trace_local/*
+kv_cache_manager/optimizer/tools/kimi_k3_test/trace_*/
+kv_cache_manager/optimizer/tools/kimi_k3_test/tools/*

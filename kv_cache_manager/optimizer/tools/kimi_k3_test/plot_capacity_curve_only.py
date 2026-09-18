@@ -76,18 +76,61 @@ def plot_capacity_curve(output_dir: Path) -> None:
             fontsize=10,
         )
 
+    # Dynamically set x-axis range based on useful capacity data
+    # Find where the curve reaches plateau (95% of infinite or actual plateau point)
+    useful_max = cap95 if cap95 is not None else knee
+    if plateau is not None:
+        useful_max = max(useful_max or 0, plateau)
+
+    # If no useful markers found, use the last significant change point
+    if useful_max is None or useful_max == 0:
+        # Find last point where rate increases by more than 0.1%
+        for i in range(len(rates) - 1, 0, -1):
+            if abs(rates[i] - rates[i-1]) > 0.1:
+                useful_max = capacities[i]
+                break
+        if useful_max is None:
+            useful_max = min(1024, max(capacities) if capacities else 1024)
+
+    # Add 20% padding to the right of useful range, minimum 1024 GiB
+    xlim_max = max(1024, useful_max * 1.2)
+
+    # Get unbounded capacity for annotation
+    unbounded_gib = manifest.get("unbounded_resident_payload_gib", 0)
+
+    # Determine elbow range description for subtitle
+    if xlim_max <= 1024:
+        elbow_range = "0-1024 GiB"
+    elif xlim_max <= 10000:
+        elbow_range = f"0-{int(xlim_max):,} GiB"
+    else:
+        elbow_range = f"0-{xlim_max/1024:.1f} TiB"
+
     ax.set(
-        xlabel="External cache payload capacity (GiB, all TP8 ranks)",
+        xlabel="External cache payload capacity (GiB, all TP ranks)",
         ylabel="Input-token hit rate (%)",
         ylim=(0, 100),
-        xlim=(-10, 1040),
+        xlim=(-10, xlim_max),
         title="Kimi-K3: capacity screening from one Facts replay",
     )
+
+    # Add unbounded capacity annotation as text in upper left
+    if unbounded_gib > 0:
+        unbounded_text = f"Unbounded (100% hit): {unbounded_gib:,.0f} GiB"
+        if unbounded_gib >= 1024:
+            unbounded_text = f"Unbounded (100% hit): {unbounded_gib/1024:.1f} TiB ({unbounded_gib:,.0f} GiB)"
+        ax.text(0.02, 0.98, unbounded_text,
+                transform=ax.transAxes,
+                fontsize=9,
+                verticalalignment='top',
+                horizontalalignment='left',
+                bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.3))
+
     ax.legend(loc="lower right", fontsize=9)
     fig.suptitle(
         f"{manifest['requests']} {workload} requests | "
         f"{layout['checkpoint_tokens']:,}-token atomic MLA + KDA bundles | "
-        "heuristic elbow on 0-1024 GiB",
+        f"useful range: {elbow_range}",
         fontsize=10,
     )
 

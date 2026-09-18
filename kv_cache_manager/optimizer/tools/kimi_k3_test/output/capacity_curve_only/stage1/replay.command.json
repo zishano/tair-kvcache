@@ -5,6 +5,6 @@
   ],
   "cwd": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache",
   "returncode": 0,
-  "elapsed_wall_s": 0.01332095917314291,
+  "elapsed_wall_s": 0.020249894820153713,
   "stdout_stderr": "/mnt/nvme1n1/data/lmk/Github/tair-kvcache/kv_cache_manager/optimizer/tools/kimi_k3_test/output/capacity_curve_only/stage1/replay.log"
 }
